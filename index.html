@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduFusion Studio – Hệ thống phân loại học liệu đa phương thức</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="header-brand">
+        <span class="brand-icon">🎓</span>
+        <div class="brand-text">
+          <h1>EduFusion Studio</h1>
+          <p class="brand-subtitle">Phân loại học liệu số Việt Nam đa phương thức</p>
+        </div>
+        <span class="badge-prototype">Prototype EduFusionNet</span>
+      </div>
+
+      <div class="header-actions">
+        <button id="btn-toggle-theme" class="theme-toggle-btn" title="Chuyển đổi giao diện">🌙 Tối</button>
+      </div>
+    </header>
+
+    <!-- DISCLAIMER BANNER -->
+    <div class="disclaimer-banner">
+      <span class="disclaimer-icon">⚠️</span>
+      <p>
+        <strong>Lưu ý nghiên cứu:</strong> Đây là bản prototype thử nghiệm phía client-side mô phỏng pipeline EduFusionNet.
+        Các mô hình ngôn ngữ và thị giác sử dụng thuật toán heuristic + lexicon từ điển để minh hoạ, không phải mô hình học máy huấn luyện trên máy chủ.
+      </p>
+    </div>
+
+    <!-- MAIN 2-COLUMN CONTAINER -->
+    <main class="app-container">
+      <!-- CỘT TRÁI: KHU VỰC ĐẦU VÀO (INPUT PANEL) -->
+      <section class="panel input-panel">
+        <div class="panel-header">
+          <h2>📥 Đầu vào học liệu (Modalities)</h2>
+          <span class="panel-tag">Client-side Input</span>
+        </div>
+
+        <!-- 1. Text Input -->
+        <div class="form-group">
+          <label for="text-input" class="form-label">
+            <span class="label-icon">📝</span>
+            <span class="label-text">Mô tả học liệu (Tiếng Việt)</span>
+          </label>
+          <textarea
+            id="text-input"
+            class="text-input"
+            rows="4"
+            placeholder="Nhập tiêu đề hoặc nội dung tóm tắt học liệu...&#10;Ví dụ: Bài giảng về đồ thị có hướng và ma trận kề trong lý thuyết đồ thị"
+          ></textarea>
+        </div>
+
+        <!-- 2. Image Input -->
+        <div class="form-group">
+          <label class="form-label">
+            <span class="label-icon">🖼️</span>
+            <span class="label-text">Ảnh minh hoạ học liệu (Tuỳ chọn)</span>
+          </label>
+
+          <div class="canvas-card">
+            <canvas id="image-canvas" width="224" height="224" title="Click để tải ảnh lên"></canvas>
+            <input type="file" id="image-upload" accept="image/*" class="hidden-input">
+          </div>
+
+          <!-- Demo Buttons -->
+          <div class="demo-actions">
+            <button type="button" id="btn-formula" class="btn-demo">
+              <span>🔢</span> Tạo ảnh công thức
+            </button>
+            <button type="button" id="btn-map" class="btn-demo">
+              <span>🗺️</span> Tạo ảnh bản đồ
+            </button>
+            <button type="button" id="btn-clear-img" class="btn-demo btn-danger" style="display: none;">
+              <span>✕</span> Xoá ảnh
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="form-action">
+          <button type="button" id="btn-classify" class="btn-primary">
+            <span class="btn-icon">🔍</span>
+            <span class="btn-text">Phân loại học liệu</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- CỘT PHẢI: KẾT QUẢ PHÂN LOẠI (RESULT PANEL) -->
+      <section class="panel result-panel">
+        <div class="panel-header">
+          <h2>📊 Kết quả phân loại &amp; Giám sát</h2>
+          <span class="panel-tag">Fusion Output</span>
+        </div>
+
+        <!-- Placeholder khi chưa phân loại -->
+        <div id="result-placeholder" class="result-placeholder">
+          <div class="placeholder-graphic">🎯</div>
+          <h3>Sẵn sàng phân loại</h3>
+          <p>Nhập mô tả văn bản hoặc chọn ảnh minh hoạ ở cột bên trái, sau đó nhấn <strong>Phân loại học liệu</strong> để chạy pipeline mô phỏng.</p>
+        </div>
+
+        <!-- Nội dung kết quả khi đã chạy -->
+        <div id="result-content" class="result-content" style="display: none;">
+          <!-- Fallback Warning Banner (MEMD) -->
+          <div id="warning-banner" class="banner banner-warning" style="display: none;"></div>
+
+          <!-- Human-in-the-loop Review Banner -->
+          <div id="review-banner" class="banner banner-review" style="display: none;"></div>
+
+          <!-- 1. Hộp dự đoán chính -->
+          <div class="card prediction-card">
+            <div class="prediction-header">
+              <span class="prediction-title">MÔN HỌC DỰ ĐOÁN</span>
+              <span id="pred-mode" class="prediction-mode">Chế độ</span>
+            </div>
+            <div id="pred-label" class="pred-label">Đang tải...</div>
+            <div id="pred-confidence" class="pred-confidence"></div>
+          </div>
+
+          <!-- 2. Phân phối xác suất 7 môn học -->
+          <div class="card chart-card">
+            <h3>📈 Phân phối xác suất 7 môn học</h3>
+            <div id="prob-chart" class="prob-chart"></div>
+          </div>
+
+          <!-- 3. Attention Map 7x7 Overlay -->
+          <div class="card attention-card">
+            <h3>🗺️ Attention Map (Mô phỏng 7×7)</h3>
+            <div class="attention-wrapper">
+              <canvas id="attention-canvas" width="224" height="224"></canvas>
+              <p id="attention-note" class="attention-note muted">Chưa có dữ liệu attention.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p><strong>EduFusion Studio</strong> – Prototype mô phỏng bài báo khoa học <em>EduFusionNet</em> (Phân loại học liệu số đa phương thức).</p>
+        <p class="footer-sub">Hệ thống chạy 100% Client-side bằng Vanilla JavaScript và HTML5 Canvas API | Đây là prototype mô phỏng, không phải model AI thật.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ENTRY POINT SCRIPT -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

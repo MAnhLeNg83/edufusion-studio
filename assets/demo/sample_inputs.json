@@ -1,0 +1,37 @@
+[
+  {
+    "subject": "Toán rời rạc",
+    "text": "Bài giảng về đồ thị có hướng và ma trận kề trong lý thuyết đồ thị",
+    "description": "Mô tả học liệu Toán rời rạc chứa các từ khoá đồ thị, có hướng, ma trận kề"
+  },
+  {
+    "subject": "Cơ sở dữ liệu",
+    "text": "SELECT * FROM students WHERE id = 1 ORDER BY created_at DESC",
+    "description": "Mô tả truy vấn SQL mẫu cho môn Cơ sở dữ liệu"
+  },
+  {
+    "subject": "Tiếng Anh",
+    "text": "Mastering English grammar: past tense, passive voice and IELTS writing skills",
+    "description": "Bài học ngữ pháp và kỹ năng viết IELTS tiếng Anh"
+  },
+  {
+    "subject": "Tiếng Nhật",
+    "text": "Học từ vựng tiếng Nhật N5 và các mẫu ngữ pháp kanji giao tiếp hằng ngày",
+    "description": "Bài học tiếng Nhật cơ bản N5 với Kanji và giao tiếp"
+  },
+  {
+    "subject": "Mạng máy tính",
+    "text": "Tìm hiểu mô hình OSI 7 tầng, giao thức TCP/IP, cấu hình router và subnet",
+    "description": "Học liệu về kiến trúc mạng và phân chia subnet"
+  },
+  {
+    "subject": "Kỹ thuật lập trình",
+    "text": "Lập trình hướng đối tượng OOP trong C++: class, kế thừa polymorphism và con trỏ",
+    "description": "Khái niệm OOP căn bản và cấu trúc dữ liệu con trỏ trong C++"
+  },
+  {
+    "subject": "Thị giác máy tính",
+    "text": "Áp dụng mạng tích chập CNN và mô hình YOLO cho object detection và segmentation",
+    "description": "Học liệu về Computer Vision ứng dụng deep learning"
+  }
+]

@@ -295,6 +295,21 @@ setupCanvasClick('image-canvas', 'image-upload');
 // --- Lắng nghe sự kiện Theme Toggle ---
 btnToggleTheme.addEventListener('click', toggleTheme);
 
+// --- Lắng nghe sự kiện điền nhanh dữ liệu mẫu (Quick Sample Chips) ---
+document.querySelectorAll('.chip-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const sampleType = btn.getAttribute('data-sample');
+    if (sampleType === 'math') {
+      textInput.value = 'Bài giảng về đồ thị có hướng và ma trận kề trong lý thuyết đồ thị';
+    } else if (sampleType === 'db') {
+      textInput.value = 'SELECT * FROM students WHERE id = 1 ORDER BY created_at DESC';
+    } else if (sampleType === 'en') {
+      textInput.value = 'Mastering English grammar: past tense, passive voice and IELTS writing skills';
+    }
+    textInput.focus();
+  });
+});
+
 // --- NÚT PHÂN LOẠI CHÍNH (CLASSIFY PIPELINE) ---
 btnClassify.addEventListener('click', async () => {
   const textValue = textInput.value ? textInput.value.trim() : '';

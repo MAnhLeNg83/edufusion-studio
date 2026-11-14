@@ -155,6 +155,9 @@ export const LEXICON = {
 
   'Cơ sở dữ liệu': [
     { word: 'sql', weight: 3 },
+    { word: 'select', weight: 3 },
+    { word: 'where', weight: 2 },
+    { word: 'from', weight: 2 },
     { word: 'khoá chính', weight: 3 },
     { word: 'khoá ngoại', weight: 3 },
     { word: 'truy vấn', weight: 3 },
@@ -171,7 +174,6 @@ export const LEXICON = {
     { word: 'primary key', weight: 3 },
     { word: 'foreign key', weight: 3 },
     { word: 'join', weight: 3 },
-    { word: 'select', weight: 2 },
     { word: 'insert', weight: 2 },
     { word: 'update', weight: 2 },
     { word: 'view', weight: 2 },

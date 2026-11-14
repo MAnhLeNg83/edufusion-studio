@@ -1,0 +1,22 @@
+{
+  "name": "edufusion-studio",
+  "version": "1.0.0",
+  "description": "EduFusion Studio – Hệ thống phân loại học liệu đa phương thức (Mô phỏng EduFusionNet)",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve .",
+    "test": "node -e \"import('./js/textBranch.js'); import('./js/fusion.js'); console.log('All modules passed');\""
+  },
+  "keywords": [
+    "edufusion",
+    "multimodal",
+    "prototype",
+    "canvas-api",
+    "phobert",
+    "efficientnet",
+    "education"
+  ],
+  "author": "MAnhLeNg83",
+  "license": "MIT"
+}

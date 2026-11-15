@@ -1,0 +1,122 @@
+// defaultSamples.js – Tập dữ liệu mẫu mặc định tích hợp sẵn (Fallback an toàn khi fetch bị chặn)
+export const DEFAULT_SAMPLES = [
+  {
+    id: "su_multi_01",
+    subject: "Lịch sử",
+    mode: "multimodal",
+    image_file: "Lich_Su_1.png",
+    text: "Lược đồ nơi diễn ra một số cuộc cách mạng tư sản từ thế kỉ XVI - XVIII tại khu vực châu Âu và Bắc Mỹ. Phân tích nguyên nhân bùng nổ và tính chất của các cuộc cách mạng tư sản thời cận đại."
+  },
+  {
+    id: "su_imgonly_02",
+    subject: "Lịch sử",
+    mode: "image_only",
+    image_file: "Lich_Su_2.png",
+    text: null
+  },
+  {
+    id: "su_multi_03",
+    subject: "Lịch sử",
+    mode: "multimodal",
+    image_file: "Lich_Su_3.png",
+    text: "Lược đồ diễn biến chiến dịch Điện Biên Phủ năm 1954: các cứ điểm đồi A1, Him Lam, Độc Lập và sở chỉ huy De Castries."
+  },
+  {
+    id: "toan_multi_01",
+    subject: "Toán học",
+    mode: "multimodal",
+    image_file: "Toan_1.png",
+    text: "Khảo sát và vẽ đồ thị hàm số y = f(x), tìm các điểm cực đại, cực tiểu, đường tiệm cận đứng, tiệm cận ngang và tính thể tích khối tròn xoay tạo bởi hình phẳng khi quay quanh trục hoành."
+  },
+  {
+    id: "toan_imgonly_02",
+    subject: "Toán học",
+    mode: "image_only",
+    image_file: "Toan_2.png",
+    text: null
+  },
+  {
+    id: "ly_multi_01",
+    subject: "Vật lý",
+    mode: "multimodal",
+    image_file: "Ly_1.png",
+    text: "Một con lắc lò xo dao động điều hòa theo phương nằm ngang với phương trình li độ x = 4cos(10πt - π/3) cm. Xác định chu kỳ dao động, cơ năng và thế năng đàn hồi của con lắc tại thời điểm t = 0.25s."
+  },
+  {
+    id: "ly_imgonly_02",
+    subject: "Vật lý",
+    mode: "image_only",
+    image_file: "Ly_2.png",
+    text: null
+  },
+  {
+    id: "hoa_multi_01",
+    subject: "Hóa học",
+    mode: "multimodal",
+    image_file: "Hoa_1.png",
+    text: "Cho m gam hỗn hợp kim loại Fe và Cu tác dụng với dung dịch axit sunfuric H2SO4 đặc nóng dư thu được khí SO2 duy nhất. Viết phương trình phản ứng oxi hóa khử và cân bằng electron."
+  },
+  {
+    id: "hoa_imgonly_02",
+    subject: "Hóa học",
+    mode: "image_only",
+    image_file: "Hoa_2.png",
+    text: null
+  },
+  {
+    id: "sinh_multi_01",
+    subject: "Sinh học",
+    mode: "multimodal",
+    image_file: "Sinh_1.png",
+    text: "Quan sát tiêu bản hiển vi tế bào thực vật trong quá trình nguyên phân và giảm phân. Xác định số lượng nhiễm sắc thể, cấu trúc ADN nuclêôtit và cơ chế di truyền đột biến gen theo quy luật Menđen."
+  },
+  {
+    id: "sinh_imgonly_02",
+    subject: "Sinh học",
+    mode: "image_only",
+    image_file: "Sinh_2.png",
+    text: null
+  },
+  {
+    id: "dia_multi_01",
+    subject: "Địa lý",
+    mode: "multimodal",
+    image_file: "Dia_1.png",
+    text: "Dựa vào Atlat Địa lý Việt Nam và bản đồ khí hậu, phân tích sự phân hóa địa hình nhiệt đới gió mùa, mạng lưới sông ngòi lưu vực sông Mê Kông và tiềm năng kinh tế vùng biển duyên hải miền Trung."
+  },
+  {
+    id: "dia_imgonly_02",
+    subject: "Địa lý",
+    mode: "image_only",
+    image_file: "Dia_2.png",
+    text: null
+  },
+  {
+    id: "van_multi_01",
+    subject: "Ngữ văn",
+    mode: "multimodal",
+    image_file: "Ngu_van_1.png",
+    text: "Phân tích vẻ đẹp hình tượng người lính trong bài thơ Tây Tiến của nhà thơ Quang Dũng: 'Tây Tiến đoàn binh không mọc tóc / Quân xanh màu lá dữ oai hùm'. Làm rõ cảm hứng lãng mạn và tinh thần bi tráng thời kháng chiến."
+  },
+  {
+    id: "van_imgonly_02",
+    subject: "Ngữ văn",
+    mode: "image_only",
+    image_file: "Ngu_van_2.png",
+    text: null
+  },
+  {
+    id: "tin_textonly_01",
+    subject: "Tin học",
+    mode: "text_only",
+    image_file: null,
+    text: "Viết chương trình Python sử dụng vòng lặp for và cấu trúc hàm đệ quy để giải bài toán sắp xếp mảng số nguyên bằng thuật toán QuickSort và tìm kiếm nhị phân BinarySearch trong cơ sở dữ liệu."
+  },
+  {
+    id: "anh_textonly_01",
+    subject: "Tiếng Anh",
+    mode: "text_only",
+    image_file: null,
+    text: "Choose the best option to complete the conditional sentence: 'If renewable energy resources had been developed earlier, the global climate crisis would not have become so severe.' Identify the grammar tense and passive voice structure."
+  }
+];

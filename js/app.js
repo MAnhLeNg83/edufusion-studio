@@ -1,10 +1,12 @@
 // app.js – Điểm khởi nhập (Entry Point) của ứng dụng EduFusion Studio
 // Quản lý trạng thái, hỗ trợ 2 chế độ: Gemini Multimodal API & Offline Heuristic Mock
-// Tự động nạp danh sách mẫu từ assets/demo/sample_inputs.json
+// Tích hợp sẵn bộ mẫu DEFAULT_SAMPLES (fallback an toàn) kết hợp fetch & LocalStorage
 
 import { analyzeText } from './textBranch.js';
 import { analyzeImage } from './imageBranch.js';
 import { fuse } from './fusion.js';
+import { SUBJECTS } from './lexicon.js';
+import { DEFAULT_SAMPLES } from './defaultSamples.js';
 import {
   renderProbChart,
   renderPrediction,
@@ -20,7 +22,7 @@ import {
   classifyWithGemini
 } from './geminiService.js';
 
-// --- Khởi tạo và tham chiếu các DOM Elements ---
+// --- Tham chiếu các phần tử DOM ---
 const textInput = document.getElementById('text-input');
 const imageUpload = document.getElementById('image-upload');
 const imageCanvas = document.getElementById('image-canvas');
@@ -28,6 +30,8 @@ const btnClassify = document.getElementById('btn-classify');
 const btnFormula = document.getElementById('btn-formula');
 const btnMap = document.getElementById('btn-map');
 const btnClearImg = document.getElementById('btn-clear-img');
+const btnUploadFile = document.getElementById('btn-upload-file');
+const btnSaveAsSample = document.getElementById('btn-save-as-sample');
 const btnToggleTheme = document.getElementById('btn-toggle-theme');
 
 const selectEngine = document.getElementById('select-engine');
@@ -49,6 +53,7 @@ const reviewBanner = document.getElementById('review-banner');
 // Trạng thái (State)
 let hasActiveImage = false;
 let sampleDataset = [];
+const CUSTOM_SAMPLES_KEY = 'edufusion_custom_samples';
 
 /**
  * Khởi tạo hình ảnh hiển thị mặc định (Placeholder) trên Canvas
@@ -66,10 +71,10 @@ function renderCanvasPlaceholder() {
   ctx.lineWidth = 1.5;
   ctx.strokeRect(10, 10, W - 20, H - 20);
 
-  ctx.fillStyle = '#64748b';
+  ctx.fillStyle = '#475569';
   ctx.font = 'bold 13px -apple-system, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('🖼️ Click để tải ảnh lên', W / 2, H / 2 - 10);
+  ctx.fillText('🖼️ Kéo thả ảnh hoặc click để tải lên', W / 2, H / 2 - 10);
 
   ctx.fillStyle = '#94a3b8';
   ctx.font = '11px -apple-system, sans-serif';
@@ -83,14 +88,17 @@ renderCanvasPlaceholder();
 /**
  * Vẽ một HTML Image lên Canvas 224x224 (tự động căn giữa và giữ nguyên tỷ lệ)
  */
-function drawImageToCanvas(img, sourceLabel = 'Ảnh người dùng tải lên') {
+function drawImageToCanvas(img, sourceLabel = 'Ảnh học liệu') {
   const ctx = imageCanvas.getContext('2d');
   const W = imageCanvas.width;
   const H = imageCanvas.height;
 
-  const scale = Math.min(W / img.naturalWidth, H / img.naturalHeight);
-  const targetW = img.naturalWidth * scale;
-  const targetH = img.naturalHeight * scale;
+  const nw = img.naturalWidth || img.width || 224;
+  const nh = img.naturalHeight || img.height || 224;
+
+  const scale = Math.min(W / nw, H / nh);
+  const targetW = nw * scale;
+  const targetH = nh * scale;
   const offsetX = (W - targetW) / 2;
   const offsetY = (H - targetH) / 2;
 
@@ -105,6 +113,38 @@ function drawImageToCanvas(img, sourceLabel = 'Ảnh người dùng tải lên')
     imgSourceBadge.textContent = sourceLabel;
     imgSourceBadge.style.display = 'inline-block';
   }
+}
+
+/**
+ * Nạp ảnh an toàn từ đường dẫn cục bộ lên Canvas
+ */
+function loadSafeImage(imgPath, label, callback) {
+  const img = new Image();
+  // KHÔNG dùng crossOrigin = 'anonymous' cho tài nguyên local cùng domain
+  img.onload = () => {
+    drawImageToCanvas(img, label);
+    if (callback) callback();
+  };
+  img.onerror = () => {
+    console.warn(`Không thể nạp ảnh: ${imgPath}. Thử đường dẫn thay thế...`);
+    // Thử fallback không có prefix assets/ hoặc ngược lại
+    if (!imgPath.startsWith('assets/')) {
+      const fallbackImg = new Image();
+      fallbackImg.onload = () => {
+        drawImageToCanvas(fallbackImg, label);
+        if (callback) callback();
+      };
+      fallbackImg.onerror = () => {
+        hasActiveImage = false;
+        renderCanvasPlaceholder();
+      };
+      fallbackImg.src = `assets/demo/image/${imgPath}`;
+    } else {
+      hasActiveImage = false;
+      renderCanvasPlaceholder();
+    }
+  };
+  img.src = imgPath;
 }
 
 // --- QUẢN LÝ ENGINE (OFFLINE MOCK VS GEMINI API) ---
@@ -141,39 +181,67 @@ function initEngineConfig() {
 }
 initEngineConfig();
 
-// --- NẠP DỮ LIỆU TỪ assets/demo/sample_inputs.json ---
-async function loadSampleDataset() {
-  try {
-    const res = await fetch('./assets/demo/sample_inputs.json');
-    if (!res.ok) throw new Error('Không thể tải sample_inputs.json');
-    sampleDataset = await res.json();
+// --- NẠP VÀ HIỂN THỊ DANH SÁCH MẪU HỌC LIỆU (DATASET) ---
+function renderSampleDropdown() {
+  sampleSelect.innerHTML = '<option value="">-- Chọn một mẫu học liệu thử nghiệm --</option>';
 
-    sampleSelect.innerHTML = '<option value="">-- Chọn một mẫu học liệu thử nghiệm --</option>';
-
-    sampleDataset.forEach((item, idx) => {
-      const opt = document.createElement('option');
-      opt.value = idx;
-      const modeText = item.mode === 'multimodal' ? 'Đa phương thức' : (item.mode === 'image_only' ? 'Chỉ ảnh' : 'Chỉ văn bản');
-      const snippet = item.text ? (item.text.length > 55 ? item.text.substring(0, 52) + '...' : item.text) : (item.image_file || 'Ảnh minh hoạ');
-      opt.textContent = `[${item.subject}] ${modeText}: ${snippet}`;
-      sampleSelect.appendChild(opt);
-    });
-
-  } catch (err) {
-    console.warn('Không tải được sample_inputs.json:', err);
-  }
+  sampleDataset.forEach((item, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    const modeText = item.mode === 'multimodal' ? 'Đa phương thức' : (item.mode === 'image_only' ? 'Chỉ ảnh' : 'Chỉ văn bản');
+    const snippet = item.text ? (item.text.length > 50 ? item.text.substring(0, 48) + '...' : item.text) : (item.image_file || 'Ảnh minh hoạ');
+    opt.textContent = `[${item.subject}] ${modeText}: ${snippet}`;
+    sampleSelect.appendChild(opt);
+  });
 }
-loadSampleDataset();
 
-// Xử lý khi người dùng chọn mẫu từ dropdown
-sampleSelect.addEventListener('change', () => {
-  const selectedIdx = sampleSelect.value;
-  if (selectedIdx === '') {
-    sampleModeBadge.style.display = 'none';
-    return;
+function initDataset() {
+  // 1. Nạp mẫu mặc định tích hợp sẵn
+  sampleDataset = [...DEFAULT_SAMPLES];
+
+  // 2. Nạp thêm mẫu tuỳ chỉnh người dùng đã lưu từ LocalStorage
+  try {
+    const savedCustom = localStorage.getItem(CUSTOM_SAMPLES_KEY);
+    if (savedCustom) {
+      const customList = JSON.parse(savedCustom);
+      if (Array.isArray(customList)) {
+        sampleDataset.push(...customList);
+      }
+    }
+  } catch (e) {
+    console.warn('Lỗi đọc custom samples:', e);
   }
 
-  const sample = sampleDataset[selectedIdx];
+  // Hiển thị ngay lập tức lên dropdown (không cần đợi fetch)
+  renderSampleDropdown();
+
+  // 3. Thử tải thêm từ file sample_inputs.json (nếu có server hỗ trợ)
+  fetch('./assets/demo/sample_inputs.json')
+    .then(res => (res.ok ? res.json() : null))
+    .then(remoteData => {
+      if (Array.isArray(remoteData) && remoteData.length > 0) {
+        // Gộp mẫu từ file nếu chưa có trong danh sách
+        const existingIds = new Set(sampleDataset.map(s => s.id));
+        let added = false;
+        remoteData.forEach(item => {
+          if (!existingIds.has(item.id)) {
+            sampleDataset.push(item);
+            added = true;
+          }
+        });
+        if (added) renderSampleDropdown();
+      }
+    })
+    .catch(() => {
+      // Fetch thất bại (ví dụ chạy file:///) -> Vẫn an toàn vì đã nạp DEFAULT_SAMPLES
+    });
+}
+initDataset();
+
+/**
+ * Chọn và áp dụng một mẫu học liệu
+ */
+function applySample(sample, autoClassify = true) {
   if (!sample) return;
 
   // 1. Điền text
@@ -188,34 +256,42 @@ sampleSelect.addEventListener('change', () => {
   sampleModeBadge.textContent = `${modeNames[sample.mode] || sample.mode} • Môn chuẩn: ${sample.subject}`;
   sampleModeBadge.style.display = 'inline-block';
 
-  // 3. Nạp ảnh (nếu có)
+  // 3. Nạp ảnh
   const imageFileName = sample.image_file || sample.image;
   if (imageFileName) {
     let imgPath = imageFileName;
-    if (!imgPath.startsWith('assets/')) {
+    if (!imgPath.startsWith('assets/') && !imgPath.startsWith('data:')) {
       imgPath = `assets/demo/image/${imageFileName}`;
     }
 
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      drawImageToCanvas(img, `Mẫu: ${imageFileName}`);
-    };
-    img.onerror = () => {
-      console.warn(`Không thể nạp ảnh từ: ${imgPath}`);
-      renderCanvasPlaceholder();
-      hasActiveImage = false;
-    };
-    img.src = imgPath;
+    loadSafeImage(imgPath, `Mẫu: ${imageFileName}`, () => {
+      if (autoClassify) {
+        setTimeout(() => triggerClassify(), 120);
+      }
+    });
   } else {
-    // Không có ảnh
     hasActiveImage = false;
     if (btnClearImg) btnClearImg.style.display = 'none';
     renderCanvasPlaceholder();
+    if (autoClassify && sample.text) {
+      setTimeout(() => triggerClassify(), 120);
+    }
   }
+}
+
+// Xử lý khi người dùng chọn mẫu từ dropdown
+sampleSelect.addEventListener('change', () => {
+  const selectedIdx = sampleSelect.value;
+  if (selectedIdx === '') {
+    sampleModeBadge.style.display = 'none';
+    return;
+  }
+
+  const sample = sampleDataset[selectedIdx];
+  applySample(sample, true);
 });
 
-// --- DEMO 1: Tạo ảnh công thức toán học (Toán học) ---
+// --- DEMO 1: Tạo ảnh đồ thị hàm số (Toán học) ---
 btnFormula.addEventListener('click', () => {
   const ctx = imageCanvas.getContext('2d');
   const W = imageCanvas.width;
@@ -233,31 +309,28 @@ btnFormula.addEventListener('click', () => {
   ctx.strokeStyle = '#94a3b8';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(20, 110); ctx.lineTo(W - 20, 110); // Ox
-  ctx.moveTo(112, 20); ctx.lineTo(112, 200);   // Oy
+  ctx.moveTo(20, 110); ctx.lineTo(W - 20, 110);
+  ctx.moveTo(112, 20); ctx.lineTo(112, 200);
   ctx.stroke();
 
-  // Mũi tên Ox, Oy
   ctx.fillStyle = '#64748b';
   ctx.font = '10px sans-serif';
   ctx.fillText('x', W - 14, 114);
   ctx.fillText('y', 112, 14);
   ctx.fillText('O', 104, 122);
 
-  // Vẽ đồ thị hàm bậc ba dạng sóng
   ctx.strokeStyle = '#4361ee';
   ctx.lineWidth = 2.5;
   ctx.beginPath();
   for (let px = 25; px <= W - 25; px++) {
     const x = (px - 112) / 30;
-    const y = x * x * x - 3 * x; // Hàm bậc 3
+    const y = x * x * x - 3 * x;
     const py = 110 - y * 18;
     if (px === 25) ctx.moveTo(px, py);
     else ctx.lineTo(px, py);
   }
   ctx.stroke();
 
-  // Công thức tích phân và đạo hàm
   ctx.textAlign = 'left';
   ctx.fillStyle = '#0f172a';
   ctx.font = '12px serif';
@@ -361,11 +434,9 @@ btnMap.addEventListener('click', () => {
   }
 });
 
-// --- Upload ảnh từ máy tính ---
-imageUpload.addEventListener('change', event => {
-  const file = event.target.files && event.target.files[0];
+// --- Upload ảnh từ máy tính (Nút bấm & Click Canvas) ---
+function handleImageFile(file) {
   if (!file) return;
-
   const reader = new FileReader();
   reader.onload = ev => {
     const img = new Image();
@@ -375,9 +446,40 @@ imageUpload.addEventListener('change', event => {
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
+}
+
+imageUpload.addEventListener('change', event => {
+  const file = event.target.files && event.target.files[0];
+  handleImageFile(file);
 });
 
-// --- Xoá ảnh ---
+if (btnUploadFile) {
+  btnUploadFile.addEventListener('click', () => {
+    imageUpload.click();
+  });
+}
+
+// Hỗ trợ kéo thả ảnh (Drag & Drop) vào Canvas
+const canvasCard = document.querySelector('.canvas-card');
+if (canvasCard) {
+  canvasCard.addEventListener('dragover', e => {
+    e.preventDefault();
+    canvasCard.style.borderColor = 'var(--accent-primary)';
+  });
+  canvasCard.addEventListener('dragleave', () => {
+    canvasCard.style.borderColor = '';
+  });
+  canvasCard.addEventListener('drop', e => {
+    e.preventDefault();
+    canvasCard.style.borderColor = '';
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      handleImageFile(file);
+    }
+  });
+}
+
+// Xoá ảnh
 btnClearImg.addEventListener('click', () => {
   hasActiveImage = false;
   imageUpload.value = '';
@@ -391,24 +493,114 @@ setupCanvasClick('image-canvas', 'image-upload');
 // Theme toggle
 btnToggleTheme.addEventListener('click', toggleTheme);
 
-// Quick sample chips
+// --- CÁC NÚT MẪU NHANH (QUICK CHIPS) KÈM ẢNH THỰC TẾ & TỰ ĐỘNG PHÂN LOẠI ---
+const QUICK_CHIP_MAP = {
+  history: {
+    subject: 'Lịch sử',
+    mode: 'multimodal',
+    image_file: 'Lich_Su_1.png',
+    text: 'Lược đồ nơi diễn ra một số cuộc cách mạng tư sản từ thế kỉ XVI - XVIII tại khu vực châu Âu và Bắc Mỹ. Phong trào giải phóng và xác lập chủ nghĩa tư bản.'
+  },
+  math: {
+    subject: 'Toán học',
+    mode: 'multimodal',
+    image_file: 'Toan_1.png',
+    text: 'Khảo sát và vẽ đồ thị hàm số bậc ba y = f(x), tìm các điểm cực đại, cực tiểu, tính đạo hàm và thể tích khối tròn xoay.'
+  },
+  physics: {
+    subject: 'Vật lý',
+    mode: 'multimodal',
+    image_file: 'Ly_1.png',
+    text: 'Một con lắc lò xo dao động điều hòa với phương trình li độ x = 4cos(10πt - π/3) cm. Xác định chu kỳ dao động và động năng cực đại.'
+  },
+  chem: {
+    subject: 'Hóa học',
+    mode: 'multimodal',
+    image_file: 'Hoa_1.png',
+    text: 'Cho kim loại sắt tác dụng với axit sunfuric H2SO4 đặc nóng dư thu được khí SO2 duy nhất. Phản ứng oxi hóa khử và cân bằng electron.'
+  },
+  geo: {
+    subject: 'Địa lý',
+    mode: 'multimodal',
+    image_file: 'Dia_1.png',
+    text: 'Dựa vào Atlat Địa lý Việt Nam, phân tích sự phân hóa địa hình nhiệt đới gió mùa và mạng lưới sông ngòi đồng bằng sông Cửu Long.'
+  }
+};
+
 document.querySelectorAll('.chip-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const sampleType = btn.getAttribute('data-sample');
-    if (sampleType === 'history') {
-      textInput.value = 'Lược đồ nơi diễn ra một số cuộc cách mạng tư sản từ thế kỉ XVI - XVIII tại khu vực châu Âu và Bắc Mỹ';
-    } else if (sampleType === 'math') {
-      textInput.value = 'Khảo sát và vẽ đồ thị hàm số bậc ba, tính đạo hàm, tìm cực đại cực tiểu và thể tích khối tròn xoay';
-    } else if (sampleType === 'physics') {
-      textInput.value = 'Một con lắc lò xo dao động điều hòa với phương trình x = 4cos(10πt - π/3) cm. Tính chu kỳ dao động và động năng cực đại.';
-    } else if (sampleType === 'chem') {
-      textInput.value = 'Cho kim loại sắt tác dụng với axit clohiđric HCl sinh ra khí hiđro H2 và dung dịch muối sắt II clorua FeCl2. Phản ứng oxi hóa khử.';
-    } else if (sampleType === 'geo') {
-      textInput.value = 'Dựa vào Atlat Địa lý Việt Nam, hãy phân tích sự phân hóa khí hậu nhiệt đới gió mùa và mạng lưới sông ngòi đồng bằng sông Cửu Long.';
+    const sample = QUICK_CHIP_MAP[sampleType];
+    if (sample) {
+      applySample(sample, true);
     }
-    textInput.focus();
   });
 });
+
+// --- TÍNH NĂNG: LƯU NỘI DUNG HIỆN TẠI THÀNH MẪU MỚI (LƯU VÀO LOCALSTORAGE) ---
+if (btnSaveAsSample) {
+  btnSaveAsSample.addEventListener('click', () => {
+    const textVal = textInput.value.trim();
+    if (!textVal && !hasActiveImage) {
+      alert('⚠️ Hãy nhập văn bản hoặc tải ảnh lên trước khi lưu thành mẫu mới!');
+      return;
+    }
+
+    const subjectChoice = prompt(
+      `Chọn môn học cho mẫu này (nhập tên môn hoặc số 1-9):\n1. Toán học\n2. Vật lý\n3. Hóa học\n4. Sinh học\n5. Tin học\n6. Lịch sử\n7. Địa lý\n8. Ngữ văn\n9. Tiếng Anh`,
+      'Lịch sử'
+    );
+
+    if (!subjectChoice) return;
+
+    let targetSubject = subjectChoice.trim();
+    const num = parseInt(targetSubject, 10);
+    if (!isNaN(num) && num >= 1 && num <= 9) {
+      targetSubject = SUBJECTS[num - 1];
+    } else if (!SUBJECTS.includes(targetSubject)) {
+      targetSubject = SUBJECTS.find(s => s.toLowerCase() === targetSubject.toLowerCase()) || 'Toán học';
+    }
+
+    let mode = 'multimodal';
+    if (textVal && !hasActiveImage) mode = 'text_only';
+    if (!textVal && hasActiveImage) mode = 'image_only';
+
+    let savedImageData = null;
+    if (hasActiveImage) {
+      savedImageData = imageCanvas.toDataURL('image/png');
+    }
+
+    const newSample = {
+      id: `custom_${Date.now()}`,
+      subject: targetSubject,
+      mode,
+      image_file: savedImageData,
+      text: textVal || null
+    };
+
+    // Lưu vào LocalStorage
+    try {
+      const existing = JSON.parse(localStorage.getItem(CUSTOM_SAMPLES_KEY) || '[]');
+      existing.unshift(newSample);
+      localStorage.setItem(CUSTOM_SAMPLES_KEY, JSON.stringify(existing));
+    } catch (e) {
+      console.warn('Lỗi lưu LocalStorage:', e);
+    }
+
+    // Thêm vào dataset và cập nhật dropdown
+    sampleDataset.unshift(newSample);
+    renderSampleDropdown();
+    sampleSelect.value = 0;
+    applySample(newSample, false);
+
+    alert(`✅ Đã lưu mẫu mới thành công vào môn [${targetSubject}]! Lần sau bạn có thể chọn lại từ menu.`);
+  });
+}
+
+// --- HÀM THỰC THI PHÂN LOẠI (TRIGGER CLASSIFY) ---
+function triggerClassify() {
+  btnClassify.click();
+}
 
 // --- NÚT PHÂN LOẠI CHÍNH (CLASSIFY PIPELINE) ---
 btnClassify.addEventListener('click', async () => {
@@ -439,8 +631,9 @@ btnClassify.addEventListener('click', async () => {
 
   // Loading state
   btnClassify.disabled = true;
-  const originalText = btnClassify.querySelector('.btn-text').textContent;
-  btnClassify.querySelector('.btn-text').textContent = 'Đang phân loại học liệu...';
+  const btnTextEl = btnClassify.querySelector('.btn-text');
+  const originalText = btnTextEl ? btnTextEl.textContent : 'Phân loại học liệu';
+  if (btnTextEl) btnTextEl.textContent = 'Đang phân loại học liệu...';
 
   try {
     const isGeminiMode = selectEngine.value === 'gemini';
@@ -461,7 +654,6 @@ btnClassify.addEventListener('click', async () => {
       resultPlaceholder.style.display = 'none';
       resultContent.style.display = 'block';
 
-      // Fallback warnings
       let warning = null;
       if (hasTextModality && !hasImageModality) {
         warning = '⚠️ Chỉ dùng nhánh văn bản (Gemini Text-only – không có ảnh minh hoạ)';
@@ -478,7 +670,6 @@ btnClassify.addEventListener('click', async () => {
       renderPrediction(geminiResult);
       renderProbChart(geminiResult.probs);
 
-      // Sinh Attention map mô phỏng nếu có ảnh
       if (hasImageModality) {
         const imageResult = analyzeImage(imageCanvas);
         renderAttentionMap(imageResult ? imageResult.attentionMap : null, imageCanvas);
@@ -521,6 +712,6 @@ btnClassify.addEventListener('click', async () => {
     if (reviewBanner) reviewBanner.style.display = 'none';
   } finally {
     btnClassify.disabled = false;
-    btnClassify.querySelector('.btn-text').textContent = originalText;
+    if (btnTextEl) btnTextEl.textContent = originalText;
   }
 });

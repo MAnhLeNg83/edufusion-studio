@@ -898,3 +898,47 @@ body {
   line-height: 1.5;
   animation: fadeIn 0.3s ease;
 }
+
+/* --- Upload & Save Sample Actions --- */
+.btn-upload {
+  background-color: #ede9fe;
+  color: #6d28d9;
+  border-color: #ddd6fe;
+}
+
+[data-theme="dark"] .btn-upload {
+  background-color: #2e1065;
+  color: #c4b5fd;
+  border-color: #4c1d95;
+}
+
+.btn-upload:hover {
+  background-color: #ddd6fe;
+}
+
+.save-sample-row {
+  margin-top: 10px;
+}
+
+.btn-save-sample {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--bg-subtle);
+  color: var(--text-muted);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-save-sample:hover {
+  background-color: var(--border-color);
+  color: var(--text-main);
+  border-color: var(--accent-primary);
+}

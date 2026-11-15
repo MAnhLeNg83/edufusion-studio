@@ -135,16 +135,22 @@ export function analyzeImage(canvas) {
   const imageData = ctx.getImageData(0, 0, width, height);
   const data = imageData.data;
 
-  // Kiểm tra canvas trống
-  let nonWhiteOrBlack = 0;
-  for (let i = 0; i < data.length; i += 4) {
-    const r = data[i], g = data[i + 1], b = data[i + 2];
-    if ((r <= 245 || g <= 245 || b <= 245) && (r >= 10 || g >= 10 || b >= 10)) {
-      nonWhiteOrBlack++;
+  // Kiểm tra canvas có nội dung hay hoàn toàn đơn sắc (trống)
+  let diffPixels = 0;
+  const firstR = data[0], firstG = data[1], firstB = data[2];
+  for (let i = 4; i < data.length; i += 4) {
+    if (
+      Math.abs(data[i] - firstR) > 15 ||
+      Math.abs(data[i + 1] - firstG) > 15 ||
+      Math.abs(data[i + 2] - firstB) > 15
+    ) {
+      diffPixels++;
+      if (diffPixels >= 60) break;
     }
   }
 
-  if (nonWhiteOrBlack < 150) {
+  // Nếu có dưới 60 pixel khác với màu nền -> canvas xem như chưa có ảnh
+  if (diffPixels < 60) {
     return null;
   }
 

@@ -125,16 +125,26 @@
             <input type="file" id="image-upload" accept="image/*" class="hidden-input">
           </div>
 
-          <!-- Demo Buttons -->
+          <!-- Demo Buttons & Upload Actions -->
           <div class="demo-actions">
+            <button type="button" id="btn-upload-file" class="btn-demo btn-upload">
+              <span>📁</span> Tải ảnh từ máy...
+            </button>
             <button type="button" id="btn-formula" class="btn-demo">
-              <span>🔢</span> Tạo ảnh công thức (Toán)
+              <span>🔢</span> Tạo ảnh Toán
             </button>
             <button type="button" id="btn-map" class="btn-demo">
-              <span>🗺️</span> Tạo ảnh bản đồ (Địa lý)
+              <span>🗺️</span> Tạo ảnh Địa lý
             </button>
             <button type="button" id="btn-clear-img" class="btn-demo btn-danger" style="display: none;">
               <span>✕</span> Xoá ảnh
+            </button>
+          </div>
+
+          <!-- Save current as sample button -->
+          <div class="save-sample-row">
+            <button type="button" id="btn-save-as-sample" class="btn-save-sample" title="Lưu nội dung và ảnh đang có thành một mẫu mới vào danh mục">
+              <span>💾</span> Lưu nội dung này thành Mẫu mới vào Dataset
             </button>
           </div>
         </div>

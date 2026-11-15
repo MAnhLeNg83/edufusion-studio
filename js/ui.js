@@ -1,9 +1,9 @@
-// ui.js – Kết xuất giao diện (DOM rendering), biểu đồ phân phối xác suất và Attention Map
+// ui.js – Kết xuất giao diện (DOM rendering), biểu đồ xác suất 9 môn học và Attention Map
 import { SUBJECTS } from './lexicon.js';
 
 /**
- * Hiển thị biểu đồ phân phối xác suất 7 môn học bằng CSS Flexbox
- * @param {number[]} probs - Mảng xác suất tương ứng 7 môn học
+ * Hiển thị biểu đồ phân phối xác suất 9 môn học bằng CSS Flexbox
+ * @param {number[]} probs - Mảng xác suất tương ứng 9 môn học GDPT 2018
  */
 export function renderProbChart(probs) {
   const chartContainer = document.getElementById('prob-chart');
@@ -34,27 +34,35 @@ export function renderProbChart(probs) {
 }
 
 /**
- * Hiển thị khối kết quả dự đoán môn học, nhãn và huy hiệu độ tin cậy
- * @param {{ probs: number[], confidence: number, mode: string, needsReview: boolean }} fusionResult
+ * Hiển thị khối kết quả dự đoán môn học, nhãn, huy hiệu độ tin cậy và phần giải thích AI
+ * @param {{
+ *   probs: number[],
+ *   confidence: number,
+ *   mode: string,
+ *   needsReview?: boolean,
+ *   explanation?: string,
+ *   predicted_subject?: string
+ * }} result
  */
-export function renderPrediction(fusionResult) {
-  const maxIdx = fusionResult.probs.indexOf(Math.max(...fusionResult.probs));
-  const predictedSubject = SUBJECTS[maxIdx] || 'Không xác định';
-  const confidence = fusionResult.confidence;
+export function renderPrediction(result) {
+  const maxIdx = result.probs.indexOf(Math.max(...result.probs));
+  const predictedSubject = result.predicted_subject || SUBJECTS[maxIdx] || 'Không xác định';
+  const confidence = result.confidence;
 
   const labelEl = document.getElementById('pred-label');
   const confEl = document.getElementById('pred-confidence');
   const modeEl = document.getElementById('pred-mode');
+  const expEl = document.getElementById('pred-explanation');
 
   if (labelEl) labelEl.textContent = predictedSubject;
 
   // Xác định mức độ tin cậy để gán màu sắc huy hiệu (badge)
   let badgeClass = 'conf-low';
   let badgeText = 'Độ tin cậy thấp';
-  if (confidence >= 0.65) {
+  if (confidence >= 0.70) {
     badgeClass = 'conf-high';
     badgeText = 'Độ tin cậy cao';
-  } else if (confidence >= 0.4) {
+  } else if (confidence >= 0.45) {
     badgeClass = 'conf-mid';
     badgeText = 'Độ tin cậy trung bình';
   }
@@ -67,7 +75,6 @@ export function renderPrediction(fusionResult) {
     `;
   }
 
-  // Tên chế độ phân loại
   const modeNames = {
     'multimodal': '🔀 Đa phương thức (Văn bản + Ảnh)',
     'text-only': '📝 Đơn phương thức (Chỉ văn bản)',
@@ -75,7 +82,17 @@ export function renderPrediction(fusionResult) {
   };
 
   if (modeEl) {
-    modeEl.textContent = `Chế độ: ${modeNames[fusionResult.mode] || fusionResult.mode}`;
+    modeEl.textContent = `Chế độ: ${modeNames[result.mode] || result.mode}`;
+  }
+
+  // Hiển thị giải thích logic phân loại (nếu có từ Gemini hoặc heuristic)
+  if (expEl) {
+    if (result.explanation) {
+      expEl.innerHTML = `<strong>💡 Lý giải của AI:</strong> ${result.explanation}`;
+      expEl.style.display = 'block';
+    } else {
+      expEl.style.display = 'none';
+    }
   }
 }
 
@@ -95,7 +112,6 @@ export function renderAttentionMap(attentionMap, originalCanvas) {
 
   ctx.clearRect(0, 0, W, H);
 
-  // Trường hợp không có modality ảnh
   if (!attentionMap || !originalCanvas) {
     ctx.fillStyle = '#f1f5f9';
     ctx.fillRect(0, 0, W, H);
@@ -105,7 +121,7 @@ export function renderAttentionMap(attentionMap, originalCanvas) {
     ctx.fillText('Không có ảnh minh hoạ', W / 2, H / 2 - 10);
     ctx.fillText('→ Không có attention map', W / 2, H / 2 + 14);
 
-    attNote.textContent = 'ℹ️ Không có ảnh đầu vào → Hệ thống không tạo Attention Map.';
+    attNote.textContent = 'ℹ️ Không có ảnh đầu vào → Không tạo Attention Map.';
     attNote.className = 'attention-note muted';
     return;
   }
@@ -113,14 +129,13 @@ export function renderAttentionMap(attentionMap, originalCanvas) {
   // Bước 1: Sao chép ảnh gốc lên attention canvas
   ctx.drawImage(originalCanvas, 0, 0, W, H);
 
-  // Bước 2: Phủ các ô lưới 7x7 với màu cam ấm áp và độ trong suốt tỷ lệ theo attention
+  // Bước 2: Phủ các ô lưới 7x7
   const cellW = W / 7;
   const cellH = H / 7;
 
   for (let r = 0; r < 7; r++) {
     for (let c = 0; c < 7; c++) {
       const weight = attentionMap[r] ? attentionMap[r][c] || 0 : 0;
-      // Trọng số càng cao, màu cam càng đậm (opacity max 0.75)
       const alpha = Math.min(weight * 0.75, 0.75);
 
       ctx.fillStyle = `rgba(249, 115, 22, ${alpha})`;
@@ -128,7 +143,7 @@ export function renderAttentionMap(attentionMap, originalCanvas) {
     }
   }
 
-  // Bước 3: Vẽ các đường viền lưới (gridlines)
+  // Bước 3: Vẽ viền lưới
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
   ctx.lineWidth = 1;
   for (let i = 0; i <= 7; i++) {
@@ -149,15 +164,15 @@ export function renderAttentionMap(attentionMap, originalCanvas) {
 
 /**
  * Hiển thị các banner cảnh báo (Fallback warning và Human-in-the-loop review)
- * @param {{ warning: string | null, needsReview: boolean, confidence: number }} fusionResult
+ * @param {{ warning?: string | null, needsReview?: boolean, confidence: number }} result
  */
-export function renderBanners(fusionResult) {
+export function renderBanners(result) {
   const warningBanner = document.getElementById('warning-banner');
   const reviewBanner = document.getElementById('review-banner');
 
   if (warningBanner) {
-    if (fusionResult.warning) {
-      warningBanner.textContent = fusionResult.warning;
+    if (result.warning) {
+      warningBanner.textContent = result.warning;
       warningBanner.className = 'banner banner-warning';
       warningBanner.style.display = 'block';
     } else {
@@ -166,11 +181,11 @@ export function renderBanners(fusionResult) {
   }
 
   if (reviewBanner) {
-    if (fusionResult.needsReview) {
+    if (result.needsReview) {
       reviewBanner.innerHTML = `
         <strong>⚠️ Cần người review (Human-in-the-loop):</strong>
-        Độ tin cậy của mô hình là ${(fusionResult.confidence * 100).toFixed(1)}% (&lt; 50%).
-        Học liệu này cần chuyên viên giáo dục kiểm duyệt trước khi phân loại chính thức.
+        Độ tin cậy của mô hình là ${(result.confidence * 100).toFixed(1)}% (&lt; 50%).
+        Học liệu này cần giáo viên chuyên môn thẩm định trước khi lưu trữ chính thức.
       `;
       reviewBanner.style.display = 'block';
     } else {
@@ -191,7 +206,6 @@ export function toggleTheme() {
   const themeBtn = document.getElementById('btn-toggle-theme');
   if (themeBtn) {
     themeBtn.textContent = newTheme === 'dark' ? '☀️ Sáng' : '🌙 Tối';
-    themeBtn.setAttribute('title', newTheme === 'dark' ? 'Chuyển sang nền sáng' : 'Chuyển sang nền tối');
   }
 }
 

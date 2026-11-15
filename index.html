@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EduFusion Studio – Hệ thống phân loại học liệu đa phương thức</title>
+  <title>EduFusion Studio – Phân loại học liệu đa phương thức (9 môn GDPT 2018)</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,22 +14,52 @@
         <span class="brand-icon">🎓</span>
         <div class="brand-text">
           <h1>EduFusion Studio</h1>
-          <p class="brand-subtitle">Phân loại học liệu số Việt Nam đa phương thức</p>
+          <p class="brand-subtitle">Phân loại học liệu số đa phương thức – 9 môn GDPT 2018</p>
         </div>
-        <span class="badge-prototype">Prototype EduFusionNet</span>
+        <span class="badge-prototype">GDPT 2018 Multimodal</span>
       </div>
 
-      <div class="header-actions">
-        <button id="btn-toggle-theme" class="theme-toggle-btn" title="Chuyển đổi giao diện">🌙 Tối</button>
+      <div class="header-controls">
+        <!-- Chế độ chạy: Gemini API vs Offline Mock -->
+        <div class="mode-selector">
+          <label class="mode-label" for="select-engine">Chế độ phân loại:</label>
+          <select id="select-engine" class="engine-select">
+            <option value="offline" selected>⚡ Giả lập Offline (Heuristic Mock)</option>
+            <option value="gemini">🤖 Google Gemini API (Multimodal)</option>
+          </select>
+        </div>
+
+        <button type="button" id="btn-toggle-theme" class="theme-toggle-btn" title="Chuyển đổi giao diện Sáng / Tối">🌙 Tối</button>
       </div>
     </header>
 
+    <!-- GEMINI API KEY CONFIG PANEL (Hiện khi chọn chế độ Gemini) -->
+    <div id="gemini-key-panel" class="api-key-panel" style="display: none;">
+      <div class="api-key-row">
+        <span class="api-icon">🔑</span>
+        <label for="gemini-api-key" class="api-label">Gemini API Key:</label>
+        <input
+          type="password"
+          id="gemini-api-key"
+          class="api-input"
+          placeholder="Dán mã API Key của bạn (AI Studio) tại đây..."
+          autocomplete="off"
+        >
+        <button type="button" id="btn-save-key" class="btn-sm btn-accent">Lưu Key</button>
+        <button type="button" id="btn-clear-key" class="btn-sm btn-subtle">Xoá</button>
+      </div>
+      <p class="api-hint">
+        ℹ️ API Key được bảo mật lưu trên trình duyệt của bạn (LocalStorage).
+        Nếu không có API Key, bạn có thể chuyển về chế độ <strong>Giả lập Offline (Heuristic Mock)</strong> để chạy 100% miễn phí không cần mạng.
+      </p>
+    </div>
+
     <!-- DISCLAIMER BANNER -->
     <div class="disclaimer-banner">
-      <span class="disclaimer-icon">⚠️</span>
+      <span class="disclaimer-icon">💡</span>
       <p>
-        <strong>Lưu ý nghiên cứu:</strong> Đây là bản prototype thử nghiệm phía client-side mô phỏng pipeline EduFusionNet.
-        Các mô hình ngôn ngữ và thị giác sử dụng thuật toán heuristic + lexicon từ điển để minh hoạ, không phải mô hình học máy huấn luyện trên máy chủ.
+        <strong>Chuẩn chương trình GDPT 2018:</strong> Hệ thống tự động phân loại học liệu (văn bản và ảnh minh hoạ) thành 1 trong <strong>9 môn học bắt buộc</strong>:
+        <em>Toán học, Vật lý, Hóa học, Sinh học, Tin học, Lịch sử, Địa lý, Ngữ văn, Tiếng Anh</em>.
       </p>
     </div>
 
@@ -39,7 +69,21 @@
       <section class="panel input-panel">
         <div class="panel-header">
           <h2>📥 Đầu vào học liệu (Modalities)</h2>
-          <span class="panel-tag">Client-side Input</span>
+          <span class="panel-tag">Đa phương thức</span>
+        </div>
+
+        <!-- 0. DATASET SELECTOR: Chọn mẫu thực tế từ sample_inputs.json -->
+        <div class="form-group dataset-group">
+          <div class="form-label-row">
+            <label for="sample-select" class="form-label">
+              <span class="label-icon">📂</span>
+              <span class="label-text">Chọn mẫu học liệu mẫu (Dataset Demo)</span>
+            </label>
+            <span id="sample-mode-badge" class="mode-badge" style="display: none;"></span>
+          </div>
+          <select id="sample-select" class="sample-select">
+            <option value="">-- Chọn một mẫu học liệu thử nghiệm --</option>
+          </select>
         </div>
 
         <!-- 1. Text Input -->
@@ -49,40 +93,45 @@
               <span class="label-icon">📝</span>
               <span class="label-text">Mô tả học liệu (Tiếng Việt)</span>
             </label>
-            <div class="sample-chips" title="Nhấp để điền nhanh dữ liệu mẫu">
-              <span class="chip-label">Gợi ý nhanh:</span>
-              <button type="button" class="chip-btn" data-sample="math">Toán rời rạc</button>
-              <button type="button" class="chip-btn" data-sample="db">CSDL</button>
-              <button type="button" class="chip-btn" data-sample="en">Tiếng Anh</button>
+            <div class="sample-chips" title="Điền nhanh từ khoá">
+              <span class="chip-label">Mẫu nhanh:</span>
+              <button type="button" class="chip-btn" data-sample="history">Lịch sử</button>
+              <button type="button" class="chip-btn" data-sample="math">Toán</button>
+              <button type="button" class="chip-btn" data-sample="physics">Vật lý</button>
+              <button type="button" class="chip-btn" data-sample="chem">Hóa học</button>
+              <button type="button" class="chip-btn" data-sample="geo">Địa lý</button>
             </div>
           </div>
           <textarea
             id="text-input"
             class="text-input"
             rows="4"
-            placeholder="Nhập tiêu đề hoặc nội dung tóm tắt học liệu...&#10;Ví dụ: Bài giảng về đồ thị có hướng và ma trận kề trong lý thuyết đồ thị"
+            placeholder="Nhập nội dung câu hỏi, bài tập hoặc trích đoạn học liệu...&#10;Ví dụ: Lược đồ nơi diễn ra một số cuộc cách mạng tư sản từ thế kỉ XVI - XVIII"
           ></textarea>
         </div>
 
         <!-- 2. Image Input -->
         <div class="form-group">
-          <label class="form-label">
-            <span class="label-icon">🖼️</span>
-            <span class="label-text">Ảnh minh hoạ học liệu (Tuỳ chọn)</span>
-          </label>
+          <div class="form-label-row">
+            <label class="form-label">
+              <span class="label-icon">🖼️</span>
+              <span class="label-text">Ảnh minh hoạ học liệu (Tuỳ chọn)</span>
+            </label>
+            <span id="img-source-badge" class="img-badge" style="display: none;"></span>
+          </div>
 
           <div class="canvas-card">
-            <canvas id="image-canvas" width="224" height="224" title="Click để tải ảnh lên"></canvas>
+            <canvas id="image-canvas" width="224" height="224" title="Click để tải ảnh lên từ máy tính"></canvas>
             <input type="file" id="image-upload" accept="image/*" class="hidden-input">
           </div>
 
           <!-- Demo Buttons -->
           <div class="demo-actions">
             <button type="button" id="btn-formula" class="btn-demo">
-              <span>🔢</span> Tạo ảnh công thức
+              <span>🔢</span> Tạo ảnh công thức (Toán)
             </button>
             <button type="button" id="btn-map" class="btn-demo">
-              <span>🗺️</span> Tạo ảnh bản đồ
+              <span>🗺️</span> Tạo ảnh bản đồ (Địa lý)
             </button>
             <button type="button" id="btn-clear-img" class="btn-demo btn-danger" style="display: none;">
               <span>✕</span> Xoá ảnh
@@ -103,14 +152,14 @@
       <section class="panel result-panel">
         <div class="panel-header">
           <h2>📊 Kết quả phân loại &amp; Giám sát</h2>
-          <span class="panel-tag">Fusion Output</span>
+          <span id="active-engine-badge" class="panel-tag engine-tag">Chế độ: Offline Mock</span>
         </div>
 
         <!-- Placeholder khi chưa phân loại -->
         <div id="result-placeholder" class="result-placeholder">
           <div class="placeholder-graphic">🎯</div>
           <h3>Sẵn sàng phân loại</h3>
-          <p>Nhập mô tả văn bản hoặc chọn ảnh minh hoạ ở cột bên trái, sau đó nhấn <strong>Phân loại học liệu</strong> để chạy pipeline mô phỏng.</p>
+          <p>Chọn mẫu học liệu từ danh mục bên trái hoặc nhập văn bản/ảnh rồi bấm <strong>Phân loại học liệu</strong> để xem dự đoán.</p>
         </div>
 
         <!-- Nội dung kết quả khi đã chạy -->
@@ -129,11 +178,13 @@
             </div>
             <div id="pred-label" class="pred-label">Đang tải...</div>
             <div id="pred-confidence" class="pred-confidence"></div>
+            <!-- Phần giải thích của AI (Gemini hoặc Heuristic) -->
+            <div id="pred-explanation" class="pred-explanation" style="display: none;"></div>
           </div>
 
-          <!-- 2. Phân phối xác suất 7 môn học -->
+          <!-- 2. Phân phối xác suất 9 môn học GDPT 2018 -->
           <div class="card chart-card">
-            <h3>📈 Phân phối xác suất 7 môn học</h3>
+            <h3>📈 Phân phối xác suất 9 môn học GDPT 2018</h3>
             <div id="prob-chart" class="prob-chart"></div>
           </div>
 
@@ -152,8 +203,8 @@
     <!-- FOOTER -->
     <footer class="app-footer">
       <div class="footer-content">
-        <p><strong>EduFusion Studio</strong> – Prototype mô phỏng bài báo khoa học <em>EduFusionNet</em> (Phân loại học liệu số đa phương thức).</p>
-        <p class="footer-sub">Hệ thống chạy 100% Client-side bằng Vanilla JavaScript và HTML5 Canvas API | Đây là prototype mô phỏng, không phải model AI thật.</p>
+        <p><strong>EduFusion Studio</strong> – Hệ thống phân loại học liệu số đa phương thức theo 9 môn học bắt buộc Chương trình GDPT 2018.</p>
+        <p class="footer-sub">Hỗ trợ 2 chế độ: <strong>Google Gemini Multimodal API</strong> và <strong>Offline Heuristic Mock (Canvas + Lexicon)</strong> | Phục vụ số hoá giáo dục Việt Nam.</p>
       </div>
     </footer>
   </div>

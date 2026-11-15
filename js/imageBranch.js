@@ -1,13 +1,8 @@
-// imageBranch.js – Mô phỏng EfficientNet-B0 bằng xử lý ảnh trên Canvas API
-// Trích xuất đặc trưng pixel, Sobel Edge, Color Entropy và sinh Attention Map 7x7
+// imageBranch.js – Mô phỏng nhánh phân tích ảnh (EfficientNet-B0) cho 9 môn học GDPT 2018
+// Trích xuất đặc trưng Canvas API: Sobel Edge, Color Entropy, RGB Distribution và Attention Map 7x7
 
 /**
- * Tính mật độ cạnh (Edge Density) bằng toán tử Sobel (Sobel Filter):
- * Áp dụng kernel tích chập 3x3 trên kênh Grayscale để tính gradient độ sáng Gx, Gy
- * @param {Uint8ClampedArray} data - Mảng pixel RGBA
- * @param {number} width - Chiều rộng canvas (224)
- * @param {number} height - Chiều cao canvas (224)
- * @returns {number} Mật độ cạnh [0, 1]
+ * Tính mật độ cạnh (Edge Density) bằng toán tử Sobel Filter 3x3:
  */
 export function calculateSobelEdgeDensity(data, width, height) {
   let edgeCount = 0;
@@ -20,7 +15,6 @@ export function calculateSobelEdgeDensity(data, width, height) {
 
   for (let y = 1; y < height - 1; y++) {
     for (let x = 1; x < width - 1; x++) {
-      // 9 điểm lân cận
       const tl = getGray(x - 1, y - 1);
       const tm = getGray(x, y - 1);
       const tr = getGray(x + 1, y - 1);
@@ -30,13 +24,11 @@ export function calculateSobelEdgeDensity(data, width, height) {
       const bm = getGray(x, y + 1);
       const br = getGray(x + 1, y + 1);
 
-      // Gradient theo trục X và Y
       const gx = -tl - 2 * ml - bl + tr + 2 * mr + br;
       const gy = -tl - 2 * tm - tr + bl + 2 * bm + br;
       const magnitude = Math.sqrt(gx * gx + gy * gy);
 
-      // Ngưỡng phát hiện cạnh
-      if (magnitude > 32) {
+      if (magnitude > 30) {
         edgeCount++;
       }
     }
@@ -46,11 +38,7 @@ export function calculateSobelEdgeDensity(data, width, height) {
 }
 
 /**
- * Tính độ hỗn loạn thông tin màu sắc (Shannon Entropy) dựa trên Histogram:
- * - Entropy cao: Ảnh có độ phong phú màu sắc cao, đa dạng chi tiết (bản đồ, ảnh chụp thực tế)
- * - Entropy thấp: Ảnh đơn sắc, bản vẽ nhị phân, công thức trắng đen
- * @param {Uint8ClampedArray} data - Mảng pixel RGBA
- * @returns {number} Entropy chuẩn hoá [0, 1]
+ * Tính Shannon Entropy của lược đồ mức xám (đo lường độ phong phú màu sắc/chi tiết):
  */
 export function calculateColorEntropy(data) {
   const histogram = new Array(256).fill(0);
@@ -69,17 +57,11 @@ export function calculateColorEntropy(data) {
     }
   }
 
-  // Max entropy của 256 mức xám là log2(256) = 8 bits
   return Math.min(entropy / 8, 1);
 }
 
 /**
- * Sinh Attention Map kích thước 7x7 (tương ứng kích thước feature map cuối của EfficientNet-B0)
- * Dựa trên phương sai (variance) và mật độ chi tiết trong từng khối 32x32 pixel
- * @param {Uint8ClampedArray} data - Mảng pixel RGBA
- * @param {number} width - 224
- * @param {number} height - 224
- * @returns {number[][]} Ma trận 7x7 với giá trị [0, 1]
+ * Sinh Attention Map 7x7 từ phương sai (variance) từng khối 32x32 pixel:
  */
 export function generateAttentionMap(data, width, height) {
   const map = [];
@@ -120,7 +102,6 @@ export function generateAttentionMap(data, width, height) {
     map.push(row);
   }
 
-  // Chuẩn hoá ma trận attention về khoảng [0, 1]
   const normalizedMap = map.map(row =>
     row.map(v => (maxBlockVariance > 0 ? Math.min(v / maxBlockVariance, 1) : 0.1))
   );
@@ -129,7 +110,7 @@ export function generateAttentionMap(data, width, height) {
 }
 
 /**
- * Softmax hỗ trợ temperature cho nhánh ảnh
+ * Softmax hỗ trợ temperature:
  */
 function softmaxImage(scores, temperature = 1.2) {
   const scaled = scores.map(s => s / temperature);
@@ -140,9 +121,10 @@ function softmaxImage(scores, temperature = 1.2) {
 }
 
 /**
- * Phân tích ảnh học liệu từ phần tử Canvas (224x224):
- * @param {HTMLCanvasElement} canvas
- * @returns {{ probs: number[], features: object, attentionMap: number[][], confidence: number } | null}
+ * Phân tích ảnh học liệu Canvas theo 9 môn học Chương trình GDPT 2018:
+ * Thứ tự 9 môn:
+ * 0: Toán học, 1: Vật lý, 2: Hóa học, 3: Sinh học, 4: Tin học,
+ * 5: Lịch sử, 6: Địa lý, 7: Ngữ văn, 8: Tiếng Anh
  */
 export function analyzeImage(canvas) {
   if (!canvas) return null;
@@ -153,17 +135,15 @@ export function analyzeImage(canvas) {
   const imageData = ctx.getImageData(0, 0, width, height);
   const data = imageData.data;
 
-  // Kiểm tra canvas trống hoặc chỉ có màu đơn sắc mặc định
+  // Kiểm tra canvas trống
   let nonWhiteOrBlack = 0;
   for (let i = 0; i < data.length; i += 4) {
     const r = data[i], g = data[i + 1], b = data[i + 2];
-    // Không phải trắng hoàn toàn (>245) và không phải đen hoàn toàn (<10)
     if ((r <= 245 || g <= 245 || b <= 245) && (r >= 10 || g >= 10 || b >= 10)) {
       nonWhiteOrBlack++;
     }
   }
 
-  // Nếu canvas có ít hơn 150 pixel có nội dung -> xem như không có ảnh
   if (nonWhiteOrBlack < 150) {
     return null;
   }
@@ -186,7 +166,6 @@ export function analyzeImage(canvas) {
     if (brightness < 80) darkPixels++;
     if (brightness > 180) brightPixels++;
 
-    // Tính độ bão hoà màu (Saturation)
     const rn = r / 255, gn = g / 255, bn = b / 255;
     const max = Math.max(rn, gn, bn);
     const min = Math.min(rn, gn, bn);
@@ -201,7 +180,6 @@ export function analyzeImage(canvas) {
   const brightRatio = brightPixels / totalPixels;
   const meanSaturation = satSum / totalPixels;
 
-  // Tính độ lệch chuẩn tổng thể (Standard Deviation)
   let varSum = 0;
   const globalMean = (meanR + meanG + meanB) / 3;
   for (let i = 0; i < data.length; i += 4) {
@@ -210,7 +188,6 @@ export function analyzeImage(canvas) {
   }
   const stdDev = Math.sqrt(varSum / totalPixels);
 
-  // Mật độ cạnh Sobel và Color Entropy
   const edgeDensity = calculateSobelEdgeDensity(data, width, height);
   const entropy = calculateColorEntropy(data);
 
@@ -226,42 +203,42 @@ export function analyzeImage(canvas) {
     meanSaturation: Math.round(meanSaturation * 1000) / 1000
   };
 
-  // --- BẢNG TRỌNG SỐ HEURISTIC ÁNH XẠ ĐẶC TRƯNG → 7 MÔN ---
-  // Thứ tự index:
-  // 0: Tiếng Anh, 1: Tiếng Nhật, 2: Toán rời rạc, 3: Mạng máy tính,
-  // 4: Cơ sở dữ liệu, 5: Kỹ thuật lập trình, 6: Thị giác máy tính
-  const rawScores = [0, 0, 0, 0, 0, 0, 0];
+  // --- HEURISTIC MAPPING TRÊN 9 MÔN HỌC GDPT 2018 ---
+  const rawScores = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  // 0. Tiếng Anh: Màu sắc tươi sáng, entropy vừa-cao, độ bão hoà màu khá
-  rawScores[0] = entropy * 2.2 + meanSaturation * 2.0 - edgeDensity * 0.8;
+  // 0. Toán học: Nhiều đường nét (đồ thị, hình học không gian, công thức), ít màu, nền sáng
+  rawScores[0] = edgeDensity * 4.2 + (1 - entropy) * 2.8 + brightRatio * 2.0 - meanSaturation * 2.2;
 
-  // 1. Tiếng Nhật: Entropy cao (bản đồ địa lý, ảnh minh hoạ văn hoá), màu sắc đa dạng hoặc sắc đỏ/hồng/xanh lá
-  rawScores[1] = entropy * 2.4 + (meanR > 140 ? 1.5 : 0) + (meanG > 140 ? 1.2 : 0) + meanSaturation * 1.5;
+  // 1. Vật lý: Mật độ cạnh cao (vectơ lực, mạch điện, sóng), cân bằng sáng tối
+  rawScores[1] = edgeDensity * 3.5 + (meanB > meanR ? 1.5 : 0.8) + (stdDev > 45 ? 1.2 : 0);
 
-  // 2. Toán rời rạc: Rất nhiều đường nét / cạnh (đồ thị, ma trận, công thức), ít màu, nền sáng trắng
-  rawScores[2] = edgeDensity * 4.5 + (1 - entropy) * 2.5 + brightRatio * 2.0 - meanSaturation * 2.0;
+  // 2. Hóa học: Mô hình phân tử, ống nghiệm, màu sắc hoá chất đa dạng
+  rawScores[2] = entropy * 2.5 + meanSaturation * 2.0 + (meanR > 130 && meanG > 100 ? 1.4 : 0);
 
-  // 3. Mạng máy tính: Nhiều đường nối mạng topo, mật độ cạnh cao, màu sắc lạnh hoặc trắng xám
-  rawScores[3] = edgeDensity * 3.2 + (1 - meanSaturation) * 1.8 + (meanB > meanR ? 1.2 : 0);
+  // 3. Sinh học: Tế bào, tiêu bản vi kính, ADN, sắc xanh lục nổi trội
+  rawScores[3] = (meanG > meanR && meanG > meanB ? 3.0 : 0.5) + entropy * 2.0 + edgeDensity * 1.5;
 
-  // 4. Cơ sở dữ liệu: Cạnh dạng bảng biểu/lưới, độ sáng trung bình, cấu trúc phân khối
-  rawScores[4] = edgeDensity * 2.0 + (entropy > 0.35 && entropy < 0.75 ? 2.2 : 0) + darkRatio * 1.2;
+  // 4. Tin học: Nền tối (giao diện IDE code), sơ đồ khối flowchart
+  rawScores[4] = (darkRatio > 0.35 ? 3.5 : 0.2) + (meanB > meanR ? 1.8 : 0) + edgeDensity * 1.2;
 
-  // 5. Kỹ thuật lập trình: Nền tối (code editor dark theme) hoặc kênh xanh dương nổi trội
-  rawScores[5] = (darkRatio > 0.25 ? 2.8 : 0) + (meanB > meanR && meanB > meanG ? 2.0 : 0) + edgeDensity * 1.2;
+  // 5. Lịch sử: Lược đồ chiến dịch, bản đồ cổ ố vàng (R > B), ranh giới mũi tên tấn công
+  const isVintagePaper = (meanR > meanB + 15) && (meanG > meanB + 10);
+  rawScores[5] = edgeDensity * 3.0 + (isVintagePaper ? 3.2 : 0.5) + (entropy > 0.45 ? 1.8 : 0.5);
 
-  // 6. Thị giác máy tính: Cạnh đa dạng, kênh xanh lá (bounding box / segmentation mask) hoặc ảnh chụp vật thể
-  rawScores[6] = edgeDensity * 2.8 + (meanG > meanR ? 1.8 : 0) + entropy * 1.8 + (stdDev > 40 ? 1.5 : 0);
+  // 6. Địa lý: Bản đồ nhiều màu (độ cao địa hình, sông ngòi xanh dương), entropy rất cao
+  rawScores[6] = entropy * 3.5 + meanSaturation * 2.5 + (meanB > 120 ? 1.6 : 0);
 
-  // Đảm bảo các score không bị âm
+  // 7. Ngữ văn: Văn bản dòng chữ nhiều, phân bố đều, nền sáng trắng, ít màu
+  rawScores[7] = (brightRatio > 0.6 ? 2.5 : 0) + (edgeDensity > 0.1 && edgeDensity < 0.35 ? 2.2 : 0) - meanSaturation * 2.0;
+
+  // 8. Tiếng Anh: Minh hoạ hội thoại, infographic tươi sáng
+  rawScores[8] = entropy * 2.0 + meanSaturation * 1.8 + brightRatio * 1.0;
+
   const baseline = Math.min(...rawScores);
   const positiveScores = rawScores.map(s => Math.max(s - baseline + 0.3, 0.1));
 
-  // Softmax
   const probs = softmaxImage(positiveScores, 1.2);
   const confidence = Math.max(...probs);
-
-  // Attention Map 7x7
   const attentionMap = generateAttentionMap(data, width, height);
 
   return {

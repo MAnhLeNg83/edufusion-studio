@@ -1,93 +1,422 @@
 [
-  {
+    {
     "id": "su_multi_01",
     "subject": "Lịch sử",
     "mode": "multimodal",
     "image_file": "Lich_Su_1.png",
-    "text": "Lược đồ nơi diễn ra một số cuộc cách mạng tư sản từ thế kỉ XVI - XVIII tại khu vực châu Âu và Bắc Mỹ. Phân tích nguyên nhân bùng nổ và tính chất của các cuộc cách mạng tư sản thời cận đại."
-  },
-  {
-    "id": "su_imgonly_02",
+    "text": "Lược đồ nơi diễn ra một số cuộc cách mạng tư sản từ thế kỉ XVI - XVIII tại khu vực châu Âu và Bắc Mỹ"
+    },
+    {
+    "id": "su_multi_02",
     "subject": "Lịch sử",
-    "mode": "image_only",
+    "mode": "multimodal",
     "image_file": "Lich_Su_2.png",
-    "text": null
+    "text": "Hình 1. Lược đồ cát cứ của 12 sứ quân"
   },
   {
     "id": "su_multi_03",
     "subject": "Lịch sử",
     "mode": "multimodal",
     "image_file": "Lich_Su_3.png",
-    "text": "Lược đồ diễn biến chiến dịch Điện Biên Phủ năm 1954: các cứ điểm đồi A1, Him Lam, Độc Lập và sở chỉ huy De Castries."
+    "text": "Ngày 6-1-1946, cuộc Tổng tuyển cử bầu Quốc hội đầu tiên diễn ra trong cả nước."
+  },
+  {
+    "id": "su_multi_04",
+    "subject": "Lịch sử",
+    "mode": "multimodal",
+    "image_file": "Lich_Su_4.png",
+    "text": "Phòng tuyến sông Như Nguyệt ở phía bắc Thăng Long được gấp rút xây dựng, Lý Thường Kiệt chỉ huy lực lượng tại đây để chặn đánh đạo quân bộ của nhà Tống."
+  },
+  {
+    "id": "su_multi_05",
+    "subject": "Lịch sử",
+    "mode": "multimodal",
+    "image_file": "Lich_Su_5.png",
+    "text": "Lược đồ 17.2. Diễn biến cuộc kháng chiến lần thứ hai, chống quân xâm lược Nguyên (1285)"
+  },
+  {
+    "id": "su_multi_06",
+    "subject": "Lịch sử",
+    "mode": "multimodal",
+    "image_file": "Lich_Su_6.png",
+    "text": "Hình 4.4. Lược đồ ranh giới Đại Việt thời Trịnh - Nguyễn phân tranh"
+  },
+  {
+    "id": "su_imgonly_01",
+    "subject": "Lịch sử",
+    "mode": "image_only",
+    "image_file": "Lich_Su_7.png",
+    "text": null
+  },
+  {
+    "id": "su_imgonly_02",
+    "subject": "Lịch sử",
+    "mode": "image_only",
+    "image_file": "Lich_Su_8.png",
+    "text": null
+  },
+  {
+    "id": "su_textonly_01",
+    "subject": "Lịch sử",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Từ giữa thế kỉ XVIII, chính quyền Đàng Ngoài lâm vào khủng hoảng. Chúa Trịnh Giang không quan tâm đến triều chính, mải lo ăn chơi, hưởng thụ. Tầng lớp quan lại ra sức bóc lột nhân dân."
+  },
+  {
+    "id": "su_textonly_02",
+    "subject": "Lịch sử",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Trong khoảng 30 năm đầu thế kỉ XVIII, khắp Bắc Bộ và vùng Thanh - Nghệ đã bùng nổ hàng trăm cuộc đấu tranh lớn nhỏ, thu hút đông đảo nông dân tham gia, như các cuộc khởi nghĩa của Hoàng Công Chất, Nguyễn Hữu Cầu, Nguyễn Danh Phương, Nguyễn Dương Hưng, Lê Duy Mật, Nguyễn Tuyển, Nguyễn Cừ, ..."
   },
   {
     "id": "toan_multi_01",
     "subject": "Toán học",
     "mode": "multimodal",
     "image_file": "Toan_1.png",
-    "text": "Khảo sát và vẽ đồ thị hàm số y = f(x), tìm các điểm cực đại, cực tiểu, đường tiệm cận đứng, tiệm cận ngang và tính thể tích khối tròn xoay tạo bởi hình phẳng khi quay quanh trục hoành."
+    "text": "Cho phương trình x + 0y = 2."
+  },
+  {
+    "id": "toan_multi_02",
+    "subject": "Toán học",
+    "mode": "multimodal",
+    "image_file": "Toan_2.png",
+    "text": "So sánh MN và OM+ON."
+  },
+  {
+    "id": "toan_multi_03",
+    "subject": "Toán học",
+    "mode": "multimodal",
+    "image_file": "Toan_3.png",
+    "text": "Hai đường tròn không có điểm chung được gọi là hai đường tròn không giao nhau."
+  },
+  {
+    "id": "toan_multi_04",
+    "subject": "Toán học",
+    "mode": "multimodal",
+    "image_file": "Toan_4.png",
+    "text": "Trong các điểm có toạ độ (- 2; 2), (0; 0), (0; 1), (2 ; 2), (1; 1), điểm nào thuộc đồ thị hàm số? Điểm nào không thuộc đồ thị hàm số?"
+  },
+  {
+    "id": "toan_multi_05",
+    "subject": "Toán học",
+    "mode": "multimodal",
+    "image_file": "Toan_5.png",
+    "text": "Cho bốn điểm A, B, C, D không cùng nằm trong một mặt phẳng. Hình gồm bốn tam giác ABC, ACD, ABD và BCD gọi là hình tứ diện (hay ngắn gọn là tứ diện), kí hiệu là ABCD."
+  },
+  {
+    "id": "toan_multi_06",
+    "subject": "Toán học",
+    "mode": "multimodal",
+    "image_file": "Toan_6.png",
+    "text": "Cho tứ diện ABCD. Gọi M, N, P, Q, R và S lần lượt là trung điểm của các đoạn thẳng AB, CD, BC, AD, AC và BD. Chứng minh rằng: a) MP // QN và MP = QN; b) Các đoạn thẳng MN, PQ, RS cùng đi qua trung điểm G của mỗi đoạn."
+  },
+  {
+    "id": "toan_imgonly_01",
+    "subject": "Toán học",
+    "mode": "image_only",
+    "image_file": "Toan_7.png",
+    "text": null
   },
   {
     "id": "toan_imgonly_02",
     "subject": "Toán học",
     "mode": "image_only",
-    "image_file": "Toan_2.png",
+    "image_file": "Toan_8.png",
     "text": null
+  },
+  {
+    "id": "toan_textonly_01",
+    "subject": "Toán học",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Giải phương trình sau: x2 - 10x + 25 = 5(x-5)"
+  },
+  {
+    "id": "toan_textonly_02",
+    "subject": "Toán học",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Bất phương trình bậc nhất hai ẩn x, y có dạng tổng quát là: ax + by ≤c (ax+by ≥c, ax+by<c, ax+by>c) trong đó a, b, c là những số thực đã cho, a và bkhông đồng thời bằng 0, x và y là các ẩn số."
   },
   {
     "id": "ly_multi_01",
     "subject": "Vật lý",
     "mode": "multimodal",
-    "image_file": "Ly_1.png",
-    "text": "Một con lắc lò xo dao động điều hòa theo phương nằm ngang với phương trình li độ x = 4cos(10πt - π/3) cm. Xác định chu kỳ dao động, cơ năng và thế năng đàn hồi của con lắc tại thời điểm t = 0.25s."
+    "image_file":"Ly_1.png",
+    "text": "Đồ thị vận tốc - thời gian của chuyển động thẳng biến đổi đều"
+  },
+  {
+    "id": "ly_multi_02",
+    "subject": "Vật lý",
+    "mode": "multimodal",
+    "image_file":"Ly_2.png",
+    "text": "Từ vị trí 1 với x = A, đến vị trí 5 (x - A) vật đã thực hiện được một dao động, tương ứng thời gian một chu kì T."
+  },
+  {
+    "id": "ly_multi_03",
+    "subject": "Vật lý",
+    "mode": "multimodal",
+    "image_file":"Ly_3.png",
+    "text": "Đồ thị Hình 3.6 mô tả sự thay đổi động năng theo li độ của quả cầu có khối lượng 0,4 kg trong một con lắc lò xo treo thẳng đứng. Xác định: a) Cơ năng của con lắc lò xo. b) Vận tốc cực đại của quả cầu. c) Thế năng của con lắc lò xo khi quả cầu ở vị trí có li độ 2 cm."
+  },
+  {
+    "id": "ly_multi_04",
+    "subject": "Vật lý",
+    "mode": "multimodal",
+    "image_file":"Ly_4.png",
+    "text": "Xác định li độ, vận tốc và gia tốc của vật tại thời điểm t = 3,50 s."
+  },
+  {
+    "id": "ly_multi_05",
+    "subject": "Vật lý",
+    "mode": "multimodal",
+    "image_file":"Ly_5.png",
+    "text": "Hãy nêu hai cách để tăng độ lớn từ trường."
+  },
+  {
+    "id": "ly_multi_06",
+    "subject": "Vật lý",
+    "mode": "multimodal",
+    "image_file":"Ly_6.png",
+    "text": "Dòng điện chạy theo chiều kim đồng hồ, đầu 1 là cực nam của ống dây và hút cực bắc của thanh nam châm."
+  },
+  {
+    "id": "ly_imgonly_01",
+    "subject": "Vật lý",
+    "mode": "image_only",
+    "image_file":"Ly_7.png",
+    "text": null
   },
   {
     "id": "ly_imgonly_02",
     "subject": "Vật lý",
     "mode": "image_only",
-    "image_file": "Ly_2.png",
+    "image_file":"Ly_8.png",
     "text": null
+  },
+  {
+    "id": "ly_textonly_01",
+    "subject": "Vật lý",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Một con lắc lò xo dao động điều hòa với phương trình x = 4cos(10πt - π/3) cm. Tính chu kỳ dao động, vận tốc cực đại và thế năng đàn hồi của con lắc tại thời điểm t = 0.5s."
+  },
+  {
+    "id": "ly_textonly_02",
+    "subject": "Vật lý",
+    "mode": "text_only",
+    "image_file":null,
+    "text": "Trong khoảng thời gian t, xe máy di chuyến được quãng đường: s = v.t. Lực F coi như không đối và cùng hướng với độ dịch chuyển của vật, sinh công: A = F.s."
   },
   {
     "id": "hoa_multi_01",
     "subject": "Hóa học",
     "mode": "multimodal",
     "image_file": "Hoa_1.png",
-    "text": "Cho m gam hỗn hợp kim loại Fe và Cu tác dụng với dung dịch axit sunfuric H2SO4 đặc nóng dư thu được khí SO2 duy nhất. Viết phương trình phản ứng oxi hóa khử và cân bằng electron."
+    "text": "Mỗi nguyên tố hóa học đều có nhiều đồng vị. Trong tự nhiên, một nguyên tố hóa học dù ở dạng đơn chất hay hợp chất thì tỉ lệ giữa các đồng vị của nguyên tố này là không đổi."
+  },
+  {
+    "id": "hoa_multi_02",
+    "subject": "Hóa học",
+    "mode": "multimodal",
+    "image_file": "Hoa_2.png",
+    "text": "Các liên kết biểu diễn bằng các đường nét đứt được minh hoa như hình dưới đây có vai trò quan trọng trong việc làm bền chuỗi xoắn đôi DNA. Đó là loại liên kết gì? A. Liên kết ion. C. Liên kết cộng hoá trị không cực. B. Liên kết cộng hoa trị có cực. D. Liên kết hydrogen."
+  },
+  {
+    "id": "hoa_multi_03",
+    "subject": "Hóa học",
+    "mode": "multimodal",
+    "image_file": "Hoa_3.png",
+    "text": "Cân bằng các phản ứng oxi hoá - khử sau:"
+  },
+  {
+    "id": "hoa_multi_04",
+    "subject": "Hóa học",
+    "mode": "multimodal",
+    "image_file": "Hoa_4.png",
+    "text": "Ngoại trừ fluorine, các halogen còn lại khi phản ứng với nước hoặc dung dịch sodium hydroxide (NaOH) đều thế hiện cả tính oxi hoá và tính khử."
+  },
+  {
+    "id": "hoa_multi_05",
+    "subject": "Hóa học",
+    "mode": "multimodal",
+    "image_file": "Hoa_5.png",
+    "text": "Trong phản ứng sau đây, những chất nào đóng vai trò là base theo thuyết Brønsted - Lowry?"
+  },
+  {
+    "id": "hoa_multi_06",
+    "subject": "Hóa học",
+    "mode": "multimodal",
+    "image_file": "Hoa_6.png",
+    "text": "Trong các công thức dưới đây, có bao nhieu công thức không thoa mãn quy tắc octet?"
+  },
+  {
+    "id": "hoa_imgonly_0q",
+    "subject": "Hóa học",
+    "mode": "image_only",
+    "image_file": "Hoa_7.png",
+    "text": null
   },
   {
     "id": "hoa_imgonly_02",
     "subject": "Hóa học",
     "mode": "image_only",
-    "image_file": "Hoa_2.png",
+    "image_file": "Hoa_8.png",
     "text": null
+  },
+  {
+    "id": "hoa_textonly_01",
+    "subject": "Hóa học",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Cho 10g hỗn hợp gồm kim loại sắt Fe và nhôm Al tác dụng hoàn toàn với dung dịch axit clohiđric HCl dư. Thu được V lít khí hiđro H2 ở điều kiện tiêu chuẩn và dung dịch muối clorua. Viết phương trình phản ứng oxi hóa khử."
+  },
+  {
+    "id": "hoa_textonly_02",
+    "subject": "Hóa học",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Nguyên tử Li (Z = 3) có 2 electron ở lớp K và 1 electron ở lớp L. So sánh năng lượng của electron giữa hai lớp theo mô hình Rutherford - Bohr."
   },
   {
     "id": "sinh_multi_01",
     "subject": "Sinh học",
     "mode": "multimodal",
     "image_file": "Sinh_1.png",
-    "text": "Quan sát tiêu bản hiển vi tế bào thực vật trong quá trình nguyên phân và giảm phân. Xác định số lượng nhiễm sắc thể, cấu trúc ADN nuclêôtit và cơ chế di truyền đột biến gen theo quy luật Menđen."
+    "text": "Quan sát hình 1.1 và mô tả cơ chế làm phát sinh đột biến của acridine."
   },
   {
-    "id": "sinh_imgonly_02",
+    "id": "sinh_multi_02",
     "subject": "Sinh học",
-    "mode": "image_only",
+    "mode": "multimodal",
     "image_file": "Sinh_2.png",
-    "text": null
+    "text": "Hình 2.3 mô tả cơ chế phát sinh dạng đột biến nhiễm sắc thể nào?"
+  },
+  {
+    "id": "sinh_multi_03",
+    "subject": "Sinh học",
+    "mode": "multimodal",
+    "image_file": "Sinh_3.png",
+    "text": ""
+  },
+  {
+    "id": "sinh_multi_04",
+    "subject": "Sinh học",
+    "mode": "multimodal",
+    "image_file": "Sinh_4.png",
+    "text": ""
+  },
+  {
+    "id": "sinh_textonly_01",
+    "subject": "Sinh học",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Một phân tử ADN xoắn kép có 3000 nuclêôtit với tỷ lệ A = 20% tổng số nuclêôtit. Hãy tính số lượng từng loại nuclêôtit A, T, G, X và số liên kết hiđro của gen đột biến sau khi nhân đôi."
+  },
+  {
+    "id": "tin_textonly_01",
+    "subject": "Tin học",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Viết chương trình Python sử dụng vòng lặp for và cấu trúc hàm đệ quy để giải bài toán sắp xếp mảng số nguyên bằng thuật toán QuickSort và tìm kiếm nhị phân BinarySearch."
   },
   {
     "id": "dia_multi_01",
     "subject": "Địa lý",
     "mode": "multimodal",
     "image_file": "Dia_1.png",
-    "text": "Dựa vào Atlat Địa lý Việt Nam và bản đồ khí hậu, phân tích sự phân hóa địa hình nhiệt đới gió mùa, mạng lưới sông ngòi lưu vực sông Mê Kông và tiềm năng kinh tế vùng biển duyên hải miền Trung."
+    "text": "Đọc thông tin và quan sát các hình 2, 3, 4, em hãy: Nhận xét về sự gia tăng dân số của Việt Nam. Nêu một số hậu quả do dân số tăng nhanh ở Việt Nam."
+  },
+  {
+    "id": "dia_multi_02",
+    "subject": "Địa lý",
+    "mode": "multimodal",
+    "image_file": "Dia_2.png",
+    "text": "Hình 5. Lược đồ mật độ dân số Việt Nam năm 2021"
+  },
+  {
+    "id": "dia_multi_03",
+    "subject": "Địa lý",
+    "mode": "multimodal",
+    "image_file": "Dia_3.png",
+    "text": "Dựa vào thông tin và hình 4, hãy trình bày sự phát triển và phân bố ngành trồng trọt ở nước ta."
+  },
+  {
+    "id": "dia_multi_04",
+    "subject": "Địa lý",
+    "mode": "multimodal",
+    "image_file": "Dia_4.png",
+    "text": "Sản lượng điện ở nước ta liên tục tăng để phục vụ cho sản xuất và đời sống. Giá trị sản xuất của ngành chiếm 4,8 % giá trị sản xuất toàn ngành công nghiệp (năm 2021)."
+  },
+  {
+    "id": "dia_multi_05",
+    "subject": "Địa lý",
+    "mode": "multimodal",
+    "image_file": "Dia_5.png",
+    "text": "Dựa vào thông tin, hãy trình bày sự phát triển ngành bưu chính viễn thông ở nước ta."
+  },
+  {
+    "id": "dia_multi_06",
+    "subject": "Địa lý",
+    "mode": "multimodal",
+    "image_file": "Dia_6.png",
+    "text": "Dựa vào thông tin và hình 10.2, hãy trình bày sự phát triển và phân bố ngành công nghiệp của vùng Đồng bằng sông Hồng."
+  },
+  {
+    "id": "dia_textonly_01",
+    "subject": "Địa lý",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Dựa vào thông tin và hình 10.1, hãy phân tích thế mạnh để phát triển kinh tế biển, đảo của vùng Đồng bằng sông Hồng."
+  },
+  {
+    "id": "dia_textonly_02",
+    "subject": "Địa lý",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Đồng bằng sông Hồng có mật độ dân số cao nhất cả nước. Năm 2021, mật độ dân số của vùng là 1 091 người/km2, các địa phương có mật độ dân số cao là: Hà Nội, Bắc Ninh, Hưng Yên, Hải Phòng, ..."
+  },
+  {
+    "id": "dia_imgonly_01",
+    "subject": "Địa lý",
+    "mode": "image_only",
+    "image_file": "Dia_7.png",
+    "text": null
   },
   {
     "id": "dia_imgonly_02",
     "subject": "Địa lý",
     "mode": "image_only",
-    "image_file": "Dia_2.png",
+    "image_file": "Dia_8.png",
+    "text": null
+  },
+  {
+    "id": "van_textonly_01",
+    "subject": "Ngữ văn",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Phân tích vẻ đẹp hình tượng người lính Tây Tiến trong bài thơ của nhà thơ Quang Dũng: 'Tây Tiến đoàn binh không mọc tóc / Quân xanh màu lá dữ oai hùm'. Làm rõ cảm hứng lãng mạn và tinh thần bi tráng."
+  },
+  {
+    "id": "van_textonly_02",
+    "subject": "Ngữ văn",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Tập thơ Nhật kí trong tù thể hiện rất rõ tinh thần 'Nay ở trong thơ nên có thép'. So sánh 'chất thép' ở bài thơ Lai Tân với bài thơ Ngắm trăng."
+  },
+  {
+    "id": "van_imgonly_01",
+    "subject": "Ngữ văn",
+    "mode": "image_only",
+    "image_file": "Ngu_van_7.png",
+    "text": null
+  },
+  {
+    "id": "van_imgonly_02",
+    "subject": "Ngữ văn",
+    "mode": "image_only",
+    "image_file": "Ngu_van_8.png",
     "text": null
   },
   {
@@ -95,21 +424,42 @@
     "subject": "Ngữ văn",
     "mode": "multimodal",
     "image_file": "Ngu_van_1.png",
-    "text": "Phân tích vẻ đẹp hình tượng người lính trong bài thơ Tây Tiến của nhà thơ Quang Dũng: 'Tây Tiến đoàn binh không mọc tóc / Quân xanh màu lá dữ oai hùm'. Làm rõ cảm hứng lãng mạn và tinh thần bi tráng thời kháng chiến."
+    "text": "Hê-ra-clét giơ lưng chống đỡ bầu trời thay Át-lát."
   },
   {
-    "id": "van_imgonly_02",
+    "id": "van_multi_02",
     "subject": "Ngữ văn",
-    "mode": "image_only",
+    "mode": "multimodal",
     "image_file": "Ngu_van_2.png",
-    "text": null
+    "text": "Ao thu lạnh lẽo nước trong veo,/ Một chiếc thuyền câu bé tẻo teo./ Sóng biếc theo làn hơi gợn tí,/ Lá vàng trước gió khẽ đưa vèo."
   },
   {
-    "id": "tin_textonly_01",
-    "subject": "Tin học",
-    "mode": "text_only",
-    "image_file": null,
-    "text": "Viết chương trình Python sử dụng vòng lặp for và cấu trúc hàm đệ quy để giải bài toán sắp xếp mảng số nguyên bằng thuật toán QuickSort và tìm kiếm nhị phân BinarySearch trong cơ sở dữ liệu."
+    "id": "van_multi_03",
+    "subject": "Ngữ văn",
+    "mode": "multimodal",
+    "image_file": "Ngu_van_3.png",
+    "text": "Bỗng roi sắt gãy. Tráng sĩ bèn nhổ những cụm tre cạnh đường quật vào giặc. Giặc tan vỡ. Đám tàn quân(5) giẫm đạp lên nhau chạy trốn, tráng sĩ đuổi đến chân núi Sóc (Sóc Sơn)."
+  },
+  {
+    "id": "van_multi_04",
+    "subject": "Ngữ văn",
+    "mode": "multimodal",
+    "image_file": "Ngu_van_4.png",
+    "text": "Thạch Sanh đã có những hành động dũng cảm nào trong phần 3?"
+  },
+  {
+    "id": "van_multi_05",
+    "subject": "Ngữ văn",
+    "mode": "multimodal",
+    "image_file": "Ngu_van_5.png",
+    "text": "Xưa, có một người thợ mộc dốc hết vốn trong nhà ra mua gỗ để làm nghề đẽo cày. Cửa hàng anh ta ở ngay bên vệ đường. Người qua, kẻ lại thường ghé vào xem anh ta đẽo cày."
+  },
+  {
+    "id": "van_multi_06",
+    "subject": "Ngữ văn",
+    "mode": "multimodal",
+    "image_file": "Ngu_van_6.png",
+    "text": "Tại sao hình ảnh con thuyền giữa sóng gió được lặp lại trong đoạn văn này?"
   },
   {
     "id": "anh_textonly_01",

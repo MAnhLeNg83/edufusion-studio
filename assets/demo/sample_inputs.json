@@ -298,14 +298,42 @@
     "subject": "Sinh học",
     "mode": "multimodal",
     "image_file": "Sinh_3.png",
-    "text": ""
+    "text": "Ở hầu hết sinh vật, deoxyribonucleic acid (DNA) là vật chất di truyền. DNA có cấu trúc hoá học phù hợp với việc thực hiện chức năng của đại phân tử này trong tế bào và cơ thể."
   },
   {
     "id": "sinh_multi_04",
     "subject": "Sinh học",
     "mode": "multimodal",
     "image_file": "Sinh_4.png",
-    "text": ""
+    "text": "Trong quá trình tái bản, sự bắt cặp nhầm gây ra đột biến thay thế một cặp nucleotide này bằng một cặp nucleotide khác, ví dụ như thay thế cặp G - C bằng cặp A - T"
+  },
+  {
+    "id": "sinh_multi_05",
+    "subject": "Sinh học",
+    "mode": "multimodal",
+    "image_file": "Sinh_5.png",
+    "text": "Các loài gần nhau về nguồn gốc tổ tiên có đặc điểm giải phẫu giống nhau. Sự tương đồng về các đặc điểm giải phẫu là bằng chứng tiến hóá gián tiếp."
+  },
+  {
+    "id": "sinh_multi_06",
+    "subject": "Sinh học",
+    "mode": "multimodal",
+    "image_file": "Sinh_6.png",
+    "text": "Dưới tác động của chọn lọc tự nhiên, các biến dị thích nghi nhỏ được tích luỹ qua sinh sản và nhân lên qua các thế hệ, dần dần trở thành những biến đổi lớn và có thể dẫn tới hình thành loài mới."
+  },
+  {
+    "id": "sinh_imgonly_01",
+    "subject": "Sinh học",
+    "mode": "image_only",
+    "image_file": "Sinh_7.png",
+    "text": null
+  },
+  {
+    "id": "sinh_imgonly_02",
+    "subject": "Sinh học",
+    "mode": "image_only",
+    "image_file": "Sinh_8.png",
+    "text": null
   },
   {
     "id": "sinh_textonly_01",
@@ -315,11 +343,81 @@
     "text": "Một phân tử ADN xoắn kép có 3000 nuclêôtit với tỷ lệ A = 20% tổng số nuclêôtit. Hãy tính số lượng từng loại nuclêôtit A, T, G, X và số liên kết hiđro của gen đột biến sau khi nhân đôi."
   },
   {
+    "id": "sinh_textonly_02",
+    "subject": "Sinh học",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Ảnh hưởng của môi trường đến sự biểu hiện kiểu hình của các tính trạng đa gene là lớn hơn so với sự biểu hiện kiểu hình của tính trạng đơn gene."
+  },
+  {
+    "id": "tin_multi_01",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_1.png",
+    "text": "Nháy chuột phải vào biểu tượng máy in muốn chia sẻ và chọn Properties"
+  },
+  {
+    "id": "tin_multi_02",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_2.png",
+    "text": "Máy chủ dạng Blade (Blade Server) có các khay chứa nhiều bảng mạch mô đun tách rời. Máy chủ dạng Blade được thiết kế để tiết kiệm không gian và tối ưu hoá hiệu suất, với các bộ xử lí, bộ nhớ và các thành phần khác được gắn cứng trên các thanh và lắp vào một khung chung."
+  },
+  {
+    "id": "tin_multi_03",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_3.png",
+    "text": "Một thiết kế mạng nhỏ thường đơn giản bởi số lượng và các loại thiết bị cần thiết ít hơn so với một thiết kế mạng lớn. Hình 1 trình bày cấu trúc mạng của một tổ chức, doanh nghiệp nhỏ."
+  },
+  {
+    "id": "tin_multi_04",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_4.png",
+    "text": "Năm 2020, siêu máy tính số một thế giới có tên là Fugaku của Nhật Bản có tốc độ trên 400 petaflops, tức là trên 400 triệu tỉ phép tính trong một giây."
+  },
+  {
+    "id": "tin_multi_05",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_5.png",
+    "text": "Trong giáo dục, Internet mang lại cho học sinh một phương thức học mới và hiệu quả, đó là học trực tuyến. Trong phương thức học này, bài giảng được số hoá và đưa lên mạng. Nhờ đó người học có thể học ở nhà, ở thư viện hay bất kì nơi nào có kết nối Internet."
+  },
+  {
+    "id": "tin_multi_06",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_6.png",
+    "text": "Để thực hiện các phép toán logic khác, ta cần có thêm nhiều loại cổng logic. Dựa trên quan hệ giữa đầu ra và đầu vào, các cổng logic được đặt tên tương ứng là cổng AND, cổng OR, cổng NOT, cổng XOR, ..."
+  },
+  {
+    "id": "tin_imgonly_01",
+    "subject": "Tin học",
+    "mode": "image_only",
+    "image_file": "Tin_7.png",
+    "text": null
+  },
+  {
+    "id": "tin_imgonly_02",
+    "subject": "Tin học",
+    "mode": "image_only",
+    "image_file": "Tin_8.png",
+    "text": null
+  },
+  {
     "id": "tin_textonly_01",
     "subject": "Tin học",
     "mode": "text_only",
     "image_file": null,
     "text": "Viết chương trình Python sử dụng vòng lặp for và cấu trúc hàm đệ quy để giải bài toán sắp xếp mảng số nguyên bằng thuật toán QuickSort và tìm kiếm nhị phân BinarySearch."
+  },
+  {
+    "id": "tin_textonly_02",
+    "subject": "Tin học",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Máy chủ (Server) là một thiết bị được sử dụng để lưu trữ và chia sẻ dữ liệu hoặc dịch vụ cho các thiết bị khác trong một mạng máy tính. Một số dịch vụ được máy chủ đảm nhiệm là: lưu trữ dữ liệu, thư điện tử, trang web, trò chuyện trực tuyến, ..."
   },
   {
     "id": "dia_multi_01",
@@ -462,7 +560,63 @@
     "text": "Tại sao hình ảnh con thuyền giữa sóng gió được lặp lại trong đoạn văn này?"
   },
   {
+    "id": "anh_multi_01",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_1.png",
+    "text": ""
+  },
+  {
+    "id": "anh_multi_02",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_2.png",
+    "text": ""
+  },
+  {
+    "id": "anh_multi_03",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_3.png",
+    "text": ""
+  },
+  {
+    "id": "anh_multi_04",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_4.png",
+    "text": ""
+  },
+  {
+    "id": "anh_multi_05",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_5.png",
+    "text": ""
+  },
+  {
+    "id": "anh_multi_06",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_6.png",
+    "text": ""
+  },
+  {
+    "id": "anh_imgonly_01",
+    "subject": "Tiếng Anh",
+    "mode": "image_only",
+    "image_file": "Anh_7.png",
+    "text": ""
+  },
+  {
     "id": "anh_textonly_01",
+    "subject": "Tiếng Anh",
+    "mode": "text_only",
+    "image_file": null,
+    "text": ""
+  },
+  {
+    "id": "anh_textonly_02",
     "subject": "Tiếng Anh",
     "mode": "text_only",
     "image_file": null,

@@ -118,7 +118,8 @@ BẮT BUỘC trả về kết quả dưới dạng JSON thuần túy (không b�
   }
 
   // Danh sách các model endpoint ưu tiên (thử gemini-2.0-flash trước, fallback gemini-1.5-flash)
-  const models = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+  const models = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.7-flash'];
+  const errors = [];
   let lastError = null;
 
   for (const modelName of models) {
@@ -185,10 +186,11 @@ BẮT BUỘC trả về kết quả dưới dạng JSON thuần túy (không b�
       };
 
     } catch (err) {
-      lastError = err;
-      console.warn(`Thử model ${modelName} thất bại, đang thử tiếp:`, err);
-    }
+  lastError = err;
+  errors.push(`${modelName}: ${err.message}`);
+  console.warn(`Thử model ${modelName} thất bại, đang thử tiếp:`, err);
+  }
   }
 
-  throw lastError || new Error('Không thể kết nối tới Google Gemini API.');
+  throw new Error(errors.join(' | ') || 'Không thể kết nối tới Google Gemini API.');
 }

@@ -1,176 +1,172 @@
-# 🎓 EduFusion Studio – Hệ Thống Phân Loại Học Liệu Đa Phương Thức
+# 🎓 EduFusion Studio – Phân loại học liệu số đa phương thức (9 môn GDPT 2018)
 
-> **Prototype Client-side mô phỏng kiến trúc EduFusionNet**  
-> Phân loại học liệu số Việt Nam dựa trên tích hợp đa phương thức (Văn bản + Ảnh minh hoạ).  
-> Trang tham khảo lý thuyết: [http://eduaitech.site/PoCs/edufusion_prototype.html](http://eduaitech.site/PoCs/edufusion_prototype.html)
+> Prototype chạy hoàn toàn trên trình duyệt, minh hoạ quy trình của **EduFusionNet**: kết hợp **văn bản tiếng Việt** và **ảnh minh hoạ** để phân loại học liệu vào 1 trong 9 môn học bắt buộc của Chương trình giáo dục phổ thông 2018.
 
----
+- Mã nguồn: [GITHUB_LINK – điền đường dẫn GitHub của bạn]
+- Prototype tham chiếu của nhóm tác giả: http://eduaitech.site/PoCs/edufusion_prototype.html
+- Bài báo gốc: Ma Ngan Giang, Tran Son Hai, Nguyen Kim Quoc (2026). _Integrating Image and Text Features for Vietnamese Digital Learning Material Classification: A Survey, the EduFusionNet Algorithm, and a Web Prototype_. Journal of Intelligent Decision Making and Information Science, 3(12s), 1822–1840.
 
-## 📌 1. Giới thiệu tổng quan
-
-**EduFusion Studio** là bản thử nghiệm (prototype) trực tiếp trên trình duyệt web, mô phỏng lại luồng hoạt động (pipeline) của mô hình học sâu **EduFusionNet**. Hệ thống tiếp nhận thông tin mô tả học liệu (tiêu đề/nội dung văn bản tiếng Việt) và ảnh minh hoạ số hoá, từ đó dự đoán môn học tương ứng trong chương trình đào tạo đại học/cao đẳng công nghệ thông tin và ngôn ngữ.
-
-> ⚠️ **Lưu ý quan trọng (Disclaimer):**  
-> Đây là bản prototype thử nghiệm phía Client-side chạy hoàn toàn trên trình duyệt, không đòi hỏi backend hay GPU. Để tối ưu hoá tính trực quan và khả năng trình diễn, các mô hình học sâu (PhoBERT, EfficientNet) được mô phỏng bằng **thuật toán Heuristic, Từ điển Lexicon và HTML5 Canvas API**. Kết quả dự đoán có giá trị minh hoạ cơ chế hợp nhất thông tin và xử lý dữ liệu thiếu (MEMD).
+> ⚠️ **Lưu ý:** Đây là bản **minh hoạ**. Chế độ Offline dùng từ điển từ khoá và đặc trưng Canvas (Sobel, entropy, màu sắc) để _mô phỏng_ PhoBERT và EfficientNet-B0; không có mạng nơ-ron nào được huấn luyện trong repo này. Kết quả dùng để minh hoạ cơ chế hợp nhất và xử lý thiếu phương thức, **không** phản ánh độ chính xác của EduFusionNet trong bài báo.
 
 ---
 
-## 🏗️ 2. Kiến trúc mô phỏng EduFusionNet
+## 1. Tính năng
 
-Mô hình hoạt động theo mô hình tích hợp trễ (Late Fusion) với cơ chế phòng ngừa lỗi thiếu phương thức (Missing-Modality Handling):
+- **9 môn GDPT 2018:** Toán học, Vật lý, Hóa học, Sinh học, Tin học, Lịch sử, Địa lý, Ngữ văn, Tiếng Anh.
+- **Hai chế độ phân loại**, chọn ở thanh đầu trang:
+  - ⚡ **Offline (Heuristic Mock):** miễn phí, không cần mạng, không cần API key.
+  - 🤖 **Google Gemini API (Multimodal):** gửi văn bản và/hoặc ảnh tới Gemini, nhận môn dự đoán, xác suất và lời giải thích.
+- **Xử lý thiếu phương thức:** chỉ văn bản hoặc chỉ ảnh vẫn phân loại được, kèm banner cảnh báo.
+- **Human-in-the-loop:** độ tin cậy dưới 50% sẽ hiện banner đề nghị giáo viên thẩm định.
+- **Trực quan hoá:** biểu đồ xác suất 9 môn và Attention Map 7×7 phủ lên ảnh.
+- **Bộ 90 mẫu** (mỗi môn 10 mẫu: 6 đa phương thức, 2 chỉ ảnh, 2 chỉ văn bản), có thể lưu thêm mẫu riêng vào LocalStorage.
+- Giao diện Sáng/Tối, bố cục hai cột responsive.
+
+---
+
+## 2. Kiến trúc
 
 ```
-                        ┌─────────────────────────────────────┐
-                        │   Đầu vào học liệu đa phương thức    │
-                        └──────────────────┬──────────────────┘
-                                           │
-                   ┌───────────────────────┴───────────────────────┐
-                   ▼                                               ▼
-     ┌───────────────────────────┐                   ┌───────────────────────────┐
-     │   Nhánh Văn Bản (Text)    │                   │      Nhánh Ảnh (Image)    │
-     │  (Mô phỏng PhoBERT frozen)│                   │  (Mô phỏng EfficientNet)  │
-     └─────────────┬─────────────┘                   └─────────────┬─────────────┘
-                   │                                               │
-                   │ • Chuẩn hoá text tiếng Việt                   │ • Canvas API trích pixel
-                   │ • Khớp từ khoá n-gram (Lexicon)               │ • Sobel edge, Color entropy
-                   │ • Softmax (Temperature = 1.5)                 │ • Sinh Attention Map 7×7
-                   ▼                                               ▼
-              Vector xác suất text                           Vector xác suất ảnh
-              P_text = [p0..p6]                              P_image = [p0..p6]
-                   │                                               │
-                   └───────────────────────┬───────────────────────┘
-                                           ▼
-                 ┌───────────────────────────────────────────────────┐
-                 │    Khối tích hợp LCA (Late Confidence Aggregation)│
-                 │              & Cơ chế MEMD Fallback               │
-                 └─────────────────────────┬─────────────────────────┘
-                                           │
-       ┌───────────────────────────────────┼───────────────────────────────────┐
-       ▼                                   ▼                                   ▼
- [Cả 2 Modality]                     [Chỉ có Text]                       [Chỉ có Ảnh]
- P = 0.65×P_text + 0.35×P_img        P = P_text (MEMD Fallback)          P = P_image (MEMD Fallback)
- Hiển thị Attention Map              Cảnh báo: Thiếu ảnh                 Cảnh báo: Thiếu văn bản
-       │                                   │                                   │
-       └───────────────────────────────────┼───────────────────────────────────┘
-                                           ▼
-                 ┌───────────────────────────────────────────────────┐
-                 │       Giám sát độ tin cậy (Human-in-the-Loop)     │
-                 │     Nếu Max(P) < 0.50 ➔ Kích hoạt Cảnh báo Review │
-                 └─────────────────────────┬─────────────────────────┘
-                                           ▼
-                 ┌───────────────────────────────────────────────────┐
-                 │    Kết xuất giao diện: Bar Chart + Attention 7×7  │
-                 └───────────────────────────────────────────────────┘
+        Văn bản mô tả                          Ảnh minh hoạ (canvas 224×224)
+              │                                          │
+   ┌──────────▼──────────┐                    ┌──────────▼──────────┐
+   │  textBranch.js      │                    │  imageBranch.js     │
+   │  Lexicon + softmax  │                    │  Sobel, entropy,    │
+   │  (T = 1.5)          │                    │  màu, softmax (1.2) │
+   └──────────┬──────────┘                    └──────────┬──────────┘
+              │ P_text (9 chiều)                         │ P_image (9 chiều) + Attention 7×7
+              └───────────────────┬──────────────────────┘
+                                  ▼
+                   ┌───────────────────────────────┐
+                   │  fusion.js                    │
+                   │  Cả hai: 0.65·P_text+0.35·P_img│
+                   │  Một nhánh: dùng nguyên nhánh │
+                   │  confidence < 0.5 → cần review│
+                   └──────────────┬────────────────┘
+                                  ▼
+                       ui.js: nhãn, độ tin cậy,
+                       biểu đồ, Attention Map, banner
+
+   Chế độ Gemini: geminiService.js thay thế hai nhánh và khối hợp nhất ở trên;
+   Attention Map vẫn tính cục bộ bằng imageBranch.js.
 ```
 
----
+**Đối chiếu với bài báo:**
 
-## 📚 3. Danh mục 7 Môn học và Bộ Từ khoá (Lexicon)
-
-Hệ thống hỗ trợ phân loại 7 môn học tiêu biểu:
-
-| STT | Tên môn học | Nhóm từ khoá đặc trưng (Lexicon) | Đặc điểm ảnh minh hoạ |
-|:---:|:---|:---|:---|
-| 0 | **Tiếng Anh** | `grammar`, `vocabulary`, `ielts`, `toeic`, `listening`, `speaking`, `tense`, `passive voice` | Màu sắc tươi sáng, entropy cao |
-| 1 | **Tiếng Nhật** | `kanji`, `hiragana`, `katakana`, `jlpt`, `n5`, `n4`, `nihongo`, `romaji`, `hán tự` | Sắc đỏ/hồng, bản đồ, văn hoá |
-| 2 | **Toán rời rạc** | `đồ thị`, `graph`, `ma trận kề`, `tập hợp`, `mệnh đề`, `tổ hợp`, `đệ quy`, `chu trình`, `liên thông` | Nhiều đường nét, ma trận, công thức nền trắng |
-| 3 | **Mạng máy tính** | `tcp/ip`, `osi`, `router`, `subnet`, `dns`, `firewall`, `packet`, `lan`, `wan`, `topology` | Sơ đồ mạng, đường nối nút, tông xám/xanh |
-| 4 | **Cơ sở dữ liệu** | `sql`, `select`, `where`, `join`, `khoá chính`, `khoá ngoại`, `truy vấn`, `acid`, `transaction` | Bảng biểu dạng lưới, sơ đồ ER |
-| 5 | **Kỹ thuật lập trình** | `vòng lặp`, `hàm`, `class`, `oop`, `mảng`, `c++`, `con trỏ`, `pointer`, `linked list`, `debug` | Nền tối (Dark editor), sắc xanh dương |
-| 6 | **Thị giác máy tính** | `convolution`, `cnn`, `yolo`, `detection`, `segmentation`, `opencv`, `pixel`, `feature map`, `sobel` | Bounding box, ảnh vật thể, sắc xanh lá |
+| Khía cạnh         | EduFusionNet (bài báo)                    | EduFusion Studio (repo này)                                                           |
+| ----------------- | ----------------------------------------- | ------------------------------------------------------------------------------------- |
+| Mã hoá văn bản    | PhoBERT đóng băng                         | Từ điển từ khoá có trọng số 1–3 + softmax                                             |
+| Mã hoá ảnh        | EfficientNet-B0 tinh chỉnh                | Sobel, entropy Shannon, màu trung bình                                                |
+| Hợp nhất          | LCA = _Lightweight Cross-modal Attention_ | Trung bình có trọng số 0.65 / 0.35 (`fusion.js` gọi là _Late Confidence Aggregation_) |
+| Attention Map     | Lấy từ trọng số chú ý của LCA             | Lấy từ phương sai độ sáng từng khối ảnh                                               |
+| Thiếu phương thức | Huấn luyện bằng MEMD                      | Quy tắc dự phòng + banner cảnh báo                                                    |
 
 ---
 
-## 🚀 4. Hướng dẫn chạy cục bộ (Local Setup)
-
-Dự án sử dụng chuẩn **ECMAScript Modules (ESM)** native của trình duyệt hiện đại (`import`/`export`), do đó cần một máy chủ HTTP tĩnh (static file server):
-
-### Cách 1: Sử dụng VS Code Live Server (Khuyến nghị)
-1. Cài đặt tiện ích mở rộng **Live Server** trên VS Code.
-2. Mở thư mục `edufusion-studio` trong VS Code.
-3. Nhấp chuột phải vào `index.html` chọn **Open with Live Server**.
-4. Trình duyệt sẽ tự động mở tại `http://127.0.0.1:5500`.
-
-### Cách 2: Sử dụng Python HTTP Server
-```bash
-# Di chuyển vào thư mục dự án
-cd "g:\Demo Fusion"
-
-# Khởi chạy server tại cổng 8080
-python -m http.server 8080
-
-# Truy cập trình duyệt: http://localhost:8080
-```
-
-### Cách 3: Sử dụng Node.js (npx serve)
-```bash
-npx serve "g:\Demo Fusion"
-```
-
-> ⚠️ Không mở trực tiếp bằng giao thức `file:///index.html` vì chính sách bảo mật CORS của trình duyệt sẽ chặn nạp ES Modules.
-
----
-
-## 🧪 5. Kịch bản thử nghiệm (Test Cases nghiệm thu)
-
-1. **Test case 1 (Toán rời rạc)**:
-   - *Input:* Nhập `"Bài giảng về đồ thị có hướng và ma trận kề trong lý thuyết đồ thị"`
-   - *Kết quả:* Nhãn dự đoán **Toán rời rạc** với độ tin cậy > 90%.
-
-2. **Test case 2 (Cơ sở dữ liệu)**:
-   - *Input:* Nhập `"SELECT * FROM students WHERE id = 1 ORDER BY created_at DESC"`
-   - *Kết quả:* Nhãn dự đoán **Cơ sở dữ liệu** với độ tin cậy > 90%.
-
-3. **Test case 3 (MEMD Fallback - Chỉ có ảnh)**:
-   - *Input:* Để trống ô văn bản, bấm nút **🔢 Tạo ảnh công thức**. Bấm **Phân loại học liệu**.
-   - *Kết quả:* Hệ thống kích hoạt cơ chế MEMD Fallback, hiện banner cảnh báo màu vàng: `"⚠️ Chỉ dùng nhánh ảnh (MEMD fallback – không có văn bản mô tả)"`. Dự đoán Toán rời rạc.
-
-4. **Test case 4 (MEMD Fallback - Chỉ có văn bản)**:
-   - *Input:* Nhập `"Mastering English grammar and vocabulary for IELTS speaking test"`, không tải ảnh.
-   - *Kết quả:* Hiện banner `"⚠️ Chỉ dùng nhánh văn bản (MEMD fallback – không có ảnh minh hoạ)"`. Dự đoán Tiếng Anh.
-
-5. **Test case 5 (Validation rỗng)**:
-   - *Input:* Bỏ trống cả 2 ô văn bản và ảnh.
-   - *Kết quả:* Báo lỗi rõ ràng: `"❌ Lỗi nhập liệu: Cần ít nhất 1 modality"`, không xảy ra crash ứng dụng.
-
-6. **Test case 6 (Attention Overlay 7×7)**:
-   - *Input:* Bấm nút **🗺️ Tạo ảnh bản đồ**, sau đó bấm **Phân loại học liệu**.
-   - *Kết quả:* Canvas Attention Map bên phải hiển thị lưới 7×7 với các ô màu cam có độ đậm nhạt tương ứng với mức độ tập trung chi tiết của ảnh.
-
-7. **Test case 7 (Human-in-the-Loop Review)**:
-   - *Input:* Nhập một đoạn văn bản chung chung không khớp từ khoá nào (ví dụ: `"Buổi học giới thiệu tổng quan nhập môn"`).
-   - *Kết quả:* Độ tin cậy thấp (< 50%), xuất hiện banner cảnh báo màu xanh lá: `"⚠️ Cần người review (Human-in-the-loop)"`.
-
----
-
-## 📁 6. Cấu trúc thư mục mã nguồn
+## 3. Cấu trúc thư mục
 
 ```
 edufusion-studio/
-├── index.html                   # Giao diện chính 2 cột (HTML5 semantic)
-├── GEMINI.md                    # Workspace Rules & Tự động hoá Git
-├── README.md                    # Tài liệu hướng dẫn và kiến trúc
+├── index.html              # Giao diện chính
+├── GEMINI.md               # Quy tắc workspace (tự động commit & push)
+├── README.md
+├── package.json
 ├── css/
-│   └── style.css                # Toàn bộ định kiểu, CSS Variables, Dark/Light Mode
+│   └── style.css           # Theme Sáng/Tối, layout hai cột
 ├── js/
-│   ├── lexicon.js               # Từ điển 7 môn học (30+ keywords/môn, weights 1-3)
-│   ├── textBranch.js            # Mô phỏng PhoBERT (Chuẩn hoá tiếng Việt, Softmax)
-│   ├── imageBranch.js           # Mô phỏng EfficientNet (Sobel edge, Color entropy, 7x7 map)
-│   ├── fusion.js                # Bộ tích hợp LCA (0.65/0.35) & MEMD Fallback
-│   ├── ui.js                    # Render DOM, Bar Chart, Attention Overlay, Dark Mode
-│   └── app.js                   # Điểm khởi nhập chính, xử lý tương tác Canvas & Demo
-└── assets/
-    └── demo/
-        ├── sample_inputs.json   # Tập mẫu thử nghiệm 7 môn học
-        ├── graph_sample.svg     # Ảnh vector minh hoạ Đồ thị & Ma trận
-        └── map_sample.svg       # Ảnh vector minh hoạ Bản đồ địa lý
+│   ├── lexicon.js          # SUBJECTS (9 môn) + từ điển từ khoá
+│   ├── textBranch.js       # Nhánh văn bản (mô phỏng PhoBERT)
+│   ├── imageBranch.js      # Nhánh ảnh (mô phỏng EfficientNet) + Attention Map
+│   ├── fusion.js           # Hợp nhất 0.65/0.35, dự phòng, ngưỡng review
+│   ├── geminiService.js    # Gọi Gemini Multimodal API
+│   ├── ui.js               # Kết xuất DOM, biểu đồ, Attention Map, theme
+│   ├── defaultSamples.js   # Mẫu tích hợp sẵn (export DEFAULT_SAMPLES)
+│   └── app.js              # Điểm khởi nhập, điều phối luồng xử lý
+└── assets/demo/
+    ├── sample_inputs.json  # Bộ 90 mẫu (nạp thêm bằng fetch)
+    └── image/              # Ảnh mẫu: Toan_1.png, Lich_Su_1.png, ...
 ```
 
 ---
 
-## 💻 7. Công nghệ sử dụng (Tech Stack)
+## 4. Chạy cục bộ
 
-- **Ngôn ngữ:** Vanilla JavaScript (ES6+ Modules) – Không phụ thuộc thư viện/framework nặng.
-- **Xử lý ảnh:** HTML5 Canvas 2D Context API (Sobel Convolution Filter 3×3, Shannon Color Entropy).
-- **Giao diện:** CSS3 Flexbox & Grid, CSS Custom Properties (Theme tokens), Mobile Responsive.
-- **Quản lý mã nguồn:** Git & GitHub.
+Dự án dùng ES Modules nên **phải chạy qua máy chủ HTTP tĩnh**, không mở trực tiếp bằng `file://`.
+
+```bash
+# Cách 1: Node.js
+npx serve .
+
+# Cách 2: Python
+python -m http.server 8080
+# rồi mở http://localhost:8080
+
+# Cách 3: VS Code → cài Live Server → chuột phải index.html → Open with Live Server
+```
+
+Kiểm tra nhanh việc nạp module: `npm test`.
+
+---
+
+## 5. Sử dụng
+
+1. Chọn một mẫu ở **Dataset Demo**, hoặc nhập văn bản (tối thiểu 3 ký tự) và/hoặc tải ảnh (nhấp canvas, kéo – thả, hoặc nút _Tải ảnh từ máy_).
+2. Bấm **Phân loại học liệu** (chọn mẫu hoặc mẫu nhanh sẽ tự động phân loại).
+3. Xem môn dự đoán, độ tin cậy, phân phối xác suất 9 môn và Attention Map.
+4. Muốn giữ lại nội dung đang nhập, bấm **Lưu nội dung này thành Mẫu mới** (lưu trong LocalStorage của trình duyệt).
+
+### Dùng chế độ Gemini
+
+1. Lấy API key tại [Google AI Studio](https://aistudio.google.com/).
+2. Chọn **Google Gemini API (Multimodal)** ở đầu trang, dán key, bấm **Lưu Key**.
+3. Phân loại như bình thường.
+
+> 🔐 Key được lưu trong LocalStorage và gửi trực tiếp từ trình duyệt, nên **chỉ dùng key cá nhân/thử nghiệm**. Văn bản và ảnh học liệu sẽ được gửi tới Google. Nếu triển khai thật, hãy chuyển lời gọi qua một máy chủ trung gian.
+>
+> Danh sách mô hình thử lần lượt nằm ở biến `models` trong `js/geminiService.js`; cập nhật tên mô hình khi Google ngừng hỗ trợ.
+
+---
+
+## 6. Kịch bản kiểm thử thủ công
+
+| #   | Thao tác                                                                   | Kết quả mong đợi                                                 |
+| --- | -------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 1   | Chọn mẫu _Lịch sử – đa phương thức_                                        | Hiện môn dự đoán, biểu đồ 9 môn và Attention Map                 |
+| 2   | Chỉ nhập văn bản `Khảo sát hàm số, tính đạo hàm và tìm cực trị`, không ảnh | Dự đoán Toán học; banner vàng "Chỉ dùng nhánh văn bản"           |
+| 3   | Chỉ bấm **Tạo ảnh Toán**, để trống văn bản                                 | Banner vàng "Chỉ dùng nhánh ảnh"; có Attention Map               |
+| 4   | Bấm **Tạo ảnh Địa lý** + nhập mô tả bản đồ khí hậu Việt Nam                | Đa phương thức, nghiêng về Địa lý                                |
+| 5   | Nhập `Buổi học giới thiệu tổng quan nhập môn`                              | Không khớp từ khoá, xác suất gần đều, hiện banner **cần review** |
+| 6   | Bỏ trống cả văn bản và ảnh, bấm phân loại                                  | Báo lỗi "Cần ít nhất 1 modality", ứng dụng không crash           |
+| 7   | Chế độ Gemini, không có API key                                            | Báo thiếu key, gợi ý chuyển về chế độ Offline                    |
+| 8   | Bấm **Lưu thành Mẫu mới**, tải lại trang                                   | Mẫu vẫn còn trong danh sách                                      |
+
+> Heuristic Offline chỉ là minh hoạ nên một số mẫu có thể bị phân loại sai (ví dụ nhầm Toán – Vật lý, Lịch sử – Địa lý); đó là hành vi dự kiến của nhánh giả lập.
+
+---
+
+## 7. Hạn chế đã biết
+
+- Chưa có đánh giá định lượng (accuracy, macro-F1) trên bộ 90 mẫu.
+- Từ điển chỉ khoảng 25–31 từ khoá mỗi môn, chưa tách từ bằng VnCoreNLP và chưa chuẩn hoá Unicode.
+- Attention Map chỉ phản ánh biến thiên độ sáng, không giải thích quyết định của mô hình.
+- Giao diện mới hiển thị phân phối sau hợp nhất, chưa hiển thị điểm riêng từng nhánh.
+
+**Hướng phát triển:** script đánh giá tự động trên bộ mẫu; thay nhánh giả lập bằng mô hình EduFusionNet đã huấn luyện (ONNX hoặc API riêng); máy chủ trung gian cho Gemini; mở rộng từ điển từ dữ liệu.
+
+---
+
+## 8. Quy ước làm việc với Git
+
+Theo `GEMINI.md`, sau mỗi thay đổi không lỗi: `git add -A` → `git commit -m "<type>: <mô tả>"` → `git push origin main`, với `type` ∈ `feat`, `fix`, `refactor`, `style`, `docs`, `chore`.
+
+---
+
+## 9. Công nghệ
+
+JavaScript thuần (ES6 Modules), HTML5 Canvas 2D API, CSS3 (Grid, Flexbox, Custom Properties), Google Gemini REST API. Không dùng framework hay thư viện ngoài.
+
+## Nguồn dữ liệu ảnh minh hoạ
+
+Toàn bộ các ảnh trong `assets/demo/image/` được **trích từ sách giáo khoa Chương trình giáo dục phổ thông 2018** và chỉ dùng cho mục đích **học tập, nghiên cứu và minh hoạ** prototype. Bản quyền các hình ảnh này thuộc về tác giả và nhà xuất bản của từng cuốn sách; dự án không có quyền cấp phép lại cho chúng.
+
+Nếu bạn là chủ sở hữu bản quyền và muốn gỡ ảnh, vui lòng liên hệ qua email maianhlenguyen08@gmail.com , ảnh sẽ được xoá ngay.

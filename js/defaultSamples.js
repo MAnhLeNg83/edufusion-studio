@@ -1,4 +1,4 @@
-[
+export const DEFAULT_SAMPLES = [
     {
     "id": "su_multi_01",
     "subject": "Lịch sử",
@@ -629,4 +629,4 @@
     "image_file": null,
     "text": "Choose the best option to complete the conditional sentence: 'If renewable energy resources had been developed earlier, the global climate crisis would not have become so severe.' Identify the grammar tense and passive voice structure."
   }
-]
+];

@@ -564,56 +564,63 @@
     "subject": "Tiếng Anh",
     "mode": "multimodal",
     "image_file": "Anh_1.png",
-    "text": ""
+    "text": "Practice with a partner. Replace any words to make your own conversation."
   },
   {
     "id": "anh_multi_02",
     "subject": "Tiếng Anh",
     "mode": "multimodal",
     "image_file": "Anh_2.png",
-    "text": ""
+    "text": "Interview a famous person. Work in pairs. Student A: Imagine you are a movie star or singer. Student B: Ask your partner about his or her favorite things."
   },
   {
     "id": "anh_multi_03",
     "subject": "Tiếng Anh",
     "mode": "multimodal",
     "image_file": "Anh_3.png",
-    "text": ""
+    "text": "DESCRIBING ANIMALS-ADJECTIVES AND COMPARATIVES. Lizards are amazing. They're quiet. They're small."
   },
   {
     "id": "anh_multi_04",
     "subject": "Tiếng Anh",
     "mode": "multimodal",
     "image_file": "Anh_4.png",
-    "text": ""
+    "text": "Animals from South America. Many amazing animals live in the rain forests of South America. Look at the pictures. Do you know any of these South American animals?"
   },
   {
     "id": "anh_multi_05",
     "subject": "Tiếng Anh",
     "mode": "multimodal",
     "image_file": "Anh_5.png",
-    "text": ""
+    "text": "- I know! We both enjoy playing sports. We can go skiing! - I love skiing! But it's the middle of summer."
   },
   {
     "id": "anh_multi_06",
     "subject": "Tiếng Anh",
     "mode": "multimodal",
     "image_file": "Anh_6.png",
-    "text": ""
+    "text": "Talk with a partner. Discuss activities that you like. - I like singing. It makes me feel relaxed. - I don't want to go bungee jumping. It's too scary!"
   },
   {
     "id": "anh_imgonly_01",
     "subject": "Tiếng Anh",
     "mode": "image_only",
     "image_file": "Anh_7.png",
-    "text": ""
+    "text": null
+  },
+  {
+    "id": "anh_imgonly_02",
+    "subject": "Tiếng Anh",
+    "mode": "image_only",
+    "image_file": "Anh_8.png",
+    "text": null
   },
   {
     "id": "anh_textonly_01",
     "subject": "Tiếng Anh",
     "mode": "text_only",
     "image_file": null,
-    "text": ""
+    "text": "Circle the correct words to complete the sentences. 1. Lisa is from England / English. She's England / English."
   },
   {
     "id": "anh_textonly_02",

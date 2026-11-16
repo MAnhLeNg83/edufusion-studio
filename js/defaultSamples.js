@@ -1,12 +1,12 @@
-export const DEFAULT_SAMPLES = [
-  {
+[
+    {
     "id": "su_multi_01",
     "subject": "Lịch sử",
     "mode": "multimodal",
     "image_file": "Lich_Su_1.png",
     "text": "Lược đồ nơi diễn ra một số cuộc cách mạng tư sản từ thế kỉ XVI - XVIII tại khu vực châu Âu và Bắc Mỹ"
-  },
-  {
+    },
+    {
     "id": "su_multi_02",
     "subject": "Lịch sử",
     "mode": "multimodal",
@@ -143,56 +143,56 @@ export const DEFAULT_SAMPLES = [
     "id": "ly_multi_01",
     "subject": "Vật lý",
     "mode": "multimodal",
-    "image_file": "Ly_1.png",
+    "image_file":"Ly_1.png",
     "text": "Đồ thị vận tốc - thời gian của chuyển động thẳng biến đổi đều"
   },
   {
     "id": "ly_multi_02",
     "subject": "Vật lý",
     "mode": "multimodal",
-    "image_file": "Ly_2.png",
+    "image_file":"Ly_2.png",
     "text": "Từ vị trí 1 với x = A, đến vị trí 5 (x - A) vật đã thực hiện được một dao động, tương ứng thời gian một chu kì T."
   },
   {
     "id": "ly_multi_03",
     "subject": "Vật lý",
     "mode": "multimodal",
-    "image_file": "Ly_3.png",
+    "image_file":"Ly_3.png",
     "text": "Đồ thị Hình 3.6 mô tả sự thay đổi động năng theo li độ của quả cầu có khối lượng 0,4 kg trong một con lắc lò xo treo thẳng đứng. Xác định: a) Cơ năng của con lắc lò xo. b) Vận tốc cực đại của quả cầu. c) Thế năng của con lắc lò xo khi quả cầu ở vị trí có li độ 2 cm."
   },
   {
     "id": "ly_multi_04",
     "subject": "Vật lý",
     "mode": "multimodal",
-    "image_file": "Ly_4.png",
+    "image_file":"Ly_4.png",
     "text": "Xác định li độ, vận tốc và gia tốc của vật tại thời điểm t = 3,50 s."
   },
   {
     "id": "ly_multi_05",
     "subject": "Vật lý",
     "mode": "multimodal",
-    "image_file": "Ly_5.png",
+    "image_file":"Ly_5.png",
     "text": "Hãy nêu hai cách để tăng độ lớn từ trường."
   },
   {
     "id": "ly_multi_06",
     "subject": "Vật lý",
     "mode": "multimodal",
-    "image_file": "Ly_6.png",
+    "image_file":"Ly_6.png",
     "text": "Dòng điện chạy theo chiều kim đồng hồ, đầu 1 là cực nam của ống dây và hút cực bắc của thanh nam châm."
   },
   {
     "id": "ly_imgonly_01",
     "subject": "Vật lý",
     "mode": "image_only",
-    "image_file": "Ly_7.png",
+    "image_file":"Ly_7.png",
     "text": null
   },
   {
     "id": "ly_imgonly_02",
     "subject": "Vật lý",
     "mode": "image_only",
-    "image_file": "Ly_8.png",
+    "image_file":"Ly_8.png",
     "text": null
   },
   {
@@ -206,7 +206,7 @@ export const DEFAULT_SAMPLES = [
     "id": "ly_textonly_02",
     "subject": "Vật lý",
     "mode": "text_only",
-    "image_file": null,
+    "image_file":null,
     "text": "Trong khoảng thời gian t, xe máy di chuyến được quãng đường: s = v.t. Lực F coi như không đối và cùng hướng với độ dịch chuyển của vật, sinh công: A = F.s."
   },
   {
@@ -298,14 +298,42 @@ export const DEFAULT_SAMPLES = [
     "subject": "Sinh học",
     "mode": "multimodal",
     "image_file": "Sinh_3.png",
-    "text": ""
+    "text": "Ở hầu hết sinh vật, deoxyribonucleic acid (DNA) là vật chất di truyền. DNA có cấu trúc hoá học phù hợp với việc thực hiện chức năng của đại phân tử này trong tế bào và cơ thể."
   },
   {
     "id": "sinh_multi_04",
     "subject": "Sinh học",
     "mode": "multimodal",
     "image_file": "Sinh_4.png",
-    "text": ""
+    "text": "Trong quá trình tái bản, sự bắt cặp nhầm gây ra đột biến thay thế một cặp nucleotide này bằng một cặp nucleotide khác, ví dụ như thay thế cặp G - C bằng cặp A - T"
+  },
+  {
+    "id": "sinh_multi_05",
+    "subject": "Sinh học",
+    "mode": "multimodal",
+    "image_file": "Sinh_5.png",
+    "text": "Các loài gần nhau về nguồn gốc tổ tiên có đặc điểm giải phẫu giống nhau. Sự tương đồng về các đặc điểm giải phẫu là bằng chứng tiến hóá gián tiếp."
+  },
+  {
+    "id": "sinh_multi_06",
+    "subject": "Sinh học",
+    "mode": "multimodal",
+    "image_file": "Sinh_6.png",
+    "text": "Dưới tác động của chọn lọc tự nhiên, các biến dị thích nghi nhỏ được tích luỹ qua sinh sản và nhân lên qua các thế hệ, dần dần trở thành những biến đổi lớn và có thể dẫn tới hình thành loài mới."
+  },
+  {
+    "id": "sinh_imgonly_01",
+    "subject": "Sinh học",
+    "mode": "image_only",
+    "image_file": "Sinh_7.png",
+    "text": null
+  },
+  {
+    "id": "sinh_imgonly_02",
+    "subject": "Sinh học",
+    "mode": "image_only",
+    "image_file": "Sinh_8.png",
+    "text": null
   },
   {
     "id": "sinh_textonly_01",
@@ -315,11 +343,81 @@ export const DEFAULT_SAMPLES = [
     "text": "Một phân tử ADN xoắn kép có 3000 nuclêôtit với tỷ lệ A = 20% tổng số nuclêôtit. Hãy tính số lượng từng loại nuclêôtit A, T, G, X và số liên kết hiđro của gen đột biến sau khi nhân đôi."
   },
   {
+    "id": "sinh_textonly_02",
+    "subject": "Sinh học",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Ảnh hưởng của môi trường đến sự biểu hiện kiểu hình của các tính trạng đa gene là lớn hơn so với sự biểu hiện kiểu hình của tính trạng đơn gene."
+  },
+  {
+    "id": "tin_multi_01",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_1.png",
+    "text": "Nháy chuột phải vào biểu tượng máy in muốn chia sẻ và chọn Properties"
+  },
+  {
+    "id": "tin_multi_02",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_2.png",
+    "text": "Máy chủ dạng Blade (Blade Server) có các khay chứa nhiều bảng mạch mô đun tách rời. Máy chủ dạng Blade được thiết kế để tiết kiệm không gian và tối ưu hoá hiệu suất, với các bộ xử lí, bộ nhớ và các thành phần khác được gắn cứng trên các thanh và lắp vào một khung chung."
+  },
+  {
+    "id": "tin_multi_03",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_3.png",
+    "text": "Một thiết kế mạng nhỏ thường đơn giản bởi số lượng và các loại thiết bị cần thiết ít hơn so với một thiết kế mạng lớn. Hình 1 trình bày cấu trúc mạng của một tổ chức, doanh nghiệp nhỏ."
+  },
+  {
+    "id": "tin_multi_04",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_4.png",
+    "text": "Năm 2020, siêu máy tính số một thế giới có tên là Fugaku của Nhật Bản có tốc độ trên 400 petaflops, tức là trên 400 triệu tỉ phép tính trong một giây."
+  },
+  {
+    "id": "tin_multi_05",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_5.png",
+    "text": "Trong giáo dục, Internet mang lại cho học sinh một phương thức học mới và hiệu quả, đó là học trực tuyến. Trong phương thức học này, bài giảng được số hoá và đưa lên mạng. Nhờ đó người học có thể học ở nhà, ở thư viện hay bất kì nơi nào có kết nối Internet."
+  },
+  {
+    "id": "tin_multi_06",
+    "subject": "Tin học",
+    "mode": "multimodal",
+    "image_file": "Tin_6.png",
+    "text": "Để thực hiện các phép toán logic khác, ta cần có thêm nhiều loại cổng logic. Dựa trên quan hệ giữa đầu ra và đầu vào, các cổng logic được đặt tên tương ứng là cổng AND, cổng OR, cổng NOT, cổng XOR, ..."
+  },
+  {
+    "id": "tin_imgonly_01",
+    "subject": "Tin học",
+    "mode": "image_only",
+    "image_file": "Tin_7.png",
+    "text": null
+  },
+  {
+    "id": "tin_imgonly_02",
+    "subject": "Tin học",
+    "mode": "image_only",
+    "image_file": "Tin_8.png",
+    "text": null
+  },
+  {
     "id": "tin_textonly_01",
     "subject": "Tin học",
     "mode": "text_only",
     "image_file": null,
     "text": "Viết chương trình Python sử dụng vòng lặp for và cấu trúc hàm đệ quy để giải bài toán sắp xếp mảng số nguyên bằng thuật toán QuickSort và tìm kiếm nhị phân BinarySearch."
+  },
+  {
+    "id": "tin_textonly_02",
+    "subject": "Tin học",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Máy chủ (Server) là một thiết bị được sử dụng để lưu trữ và chia sẻ dữ liệu hoặc dịch vụ cho các thiết bị khác trong một mạng máy tính. Một số dịch vụ được máy chủ đảm nhiệm là: lưu trữ dữ liệu, thư điện tử, trang web, trò chuyện trực tuyến, ..."
   },
   {
     "id": "dia_multi_01",
@@ -462,10 +560,73 @@ export const DEFAULT_SAMPLES = [
     "text": "Tại sao hình ảnh con thuyền giữa sóng gió được lặp lại trong đoạn văn này?"
   },
   {
+    "id": "anh_multi_01",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_1.png",
+    "text": "Practice with a partner. Replace any words to make your own conversation."
+  },
+  {
+    "id": "anh_multi_02",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_2.png",
+    "text": "Interview a famous person. Work in pairs. Student A: Imagine you are a movie star or singer. Student B: Ask your partner about his or her favorite things."
+  },
+  {
+    "id": "anh_multi_03",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_3.png",
+    "text": "DESCRIBING ANIMALS-ADJECTIVES AND COMPARATIVES. Lizards are amazing. They're quiet. They're small."
+  },
+  {
+    "id": "anh_multi_04",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_4.png",
+    "text": "Animals from South America. Many amazing animals live in the rain forests of South America. Look at the pictures. Do you know any of these South American animals?"
+  },
+  {
+    "id": "anh_multi_05",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_5.png",
+    "text": "- I know! We both enjoy playing sports. We can go skiing! - I love skiing! But it's the middle of summer."
+  },
+  {
+    "id": "anh_multi_06",
+    "subject": "Tiếng Anh",
+    "mode": "multimodal",
+    "image_file": "Anh_6.png",
+    "text": "Talk with a partner. Discuss activities that you like. - I like singing. It makes me feel relaxed. - I don't want to go bungee jumping. It's too scary!"
+  },
+  {
+    "id": "anh_imgonly_01",
+    "subject": "Tiếng Anh",
+    "mode": "image_only",
+    "image_file": "Anh_7.png",
+    "text": null
+  },
+  {
+    "id": "anh_imgonly_02",
+    "subject": "Tiếng Anh",
+    "mode": "image_only",
+    "image_file": "Anh_8.png",
+    "text": null
+  },
+  {
     "id": "anh_textonly_01",
+    "subject": "Tiếng Anh",
+    "mode": "text_only",
+    "image_file": null,
+    "text": "Circle the correct words to complete the sentences. 1. Lisa is from England / English. She's England / English."
+  },
+  {
+    "id": "anh_textonly_02",
     "subject": "Tiếng Anh",
     "mode": "text_only",
     "image_file": null,
     "text": "Choose the best option to complete the conditional sentence: 'If renewable energy resources had been developed earlier, the global climate crisis would not have become so severe.' Identify the grammar tense and passive voice structure."
   }
-];
+]

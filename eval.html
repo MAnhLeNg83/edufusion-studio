@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduFusion – Kiểm thử &amp; Confusion Matrix</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin: 24px; background:#f8fafc; color:#0f172a; }
+  h1 { font-size: 1.3rem; margin: 0 0 4px; }
+  .muted { color:#64748b; font-size:.85rem; }
+  .bar { display:flex; gap:8px; flex-wrap:wrap; margin:16px 0; align-items:center; }
+  button { padding:8px 14px; border:1px solid #cbd5e1; background:#fff; border-radius:8px; cursor:pointer; font-weight:600; }
+  button.active { background:#4361ee; color:#fff; border-color:#4361ee; }
+  .summary { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  .stat { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:10px 16px; }
+  .stat b { display:block; font-size:1.4rem; }
+  table { border-collapse:collapse; background:#fff; font-size:.85rem; }
+  th, td { border:1px solid #e2e8f0; padding:6px 10px; text-align:center; }
+  th { background:#f1f5f9; }
+  th.row { text-align:right; white-space:nowrap; }
+  td.diag { font-weight:700; }
+  td.zero { color:#cbd5e1; }
+  .wrap { overflow-x:auto; margin-bottom:20px; }
+  h2 { font-size:1rem; margin:20px 0 8px; }
+  #errors { max-height:320px; overflow:auto; background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:8px 14px; font-size:.82rem; }
+  #errors div { padding:3px 0; border-bottom:1px solid #f1f5f9; }
+  .warn { background:#fef3c7; border:1px solid #fde68a; padding:8px 12px; border-radius:8px; margin:8px 0; font-size:.85rem; }
+</style>
+</head>
+<body>
+<h1>📊 Kiểm thử tự động &amp; Confusion Matrix (chế độ Offline Heuristic)</h1>
+<div class="muted">Chạy trên toàn bộ <code>DEFAULT_SAMPLES</code>. Hàng = môn chuẩn, cột = môn dự đoán. Cột "?" = không dự đoán được (không khớp từ khoá / ảnh trống).</div>
+
+<div id="warn"></div>
+<div class="bar">
+  <button data-mode="text" class="active">📝 Chỉ văn bản</button>
+  <button data-mode="image">🖼️ Chỉ ảnh</button>
+  <button data-mode="fusion">🔀 Hợp nhất (Fusion)</button>
+  <span style="flex:1"></span>
+  <button id="btn-csv">⬇️ Xuất CSV</button>
+</div>
+
+<div id="status" class="muted">Đang nạp ảnh và chạy phân loại...</div>
+<div class="summary" id="summary"></div>
+<div class="wrap"><table id="matrix"></table></div>
+<h2>Chỉ số theo môn</h2>
+<div class="wrap"><table id="metrics"></table></div>
+<h2>Các mẫu dự đoán sai</h2>
+<div id="errors"></div>
+
+<canvas id="c" width="224" height="224" style="display:none"></canvas>
+
+<script type="module">
+import { SUBJECTS } from './js/lexicon.js';
+import { DEFAULT_SAMPLES } from './js/defaultSamples.js';
+import { analyzeText } from './js/textBranch.js';
+import { analyzeImage } from './js/imageBranch.js';
+import { fuse } from './js/fusion.js';
+
+const SHORT = ['Toán','Lý','Hóa','Sinh','Tin','Sử','Địa','Văn','Anh'];
+const UNKNOWN = SUBJECTS.length; // cột "?"
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+if (location.protocol === 'file:') {
+  document.getElementById('warn').innerHTML =
+    '<div class="warn">⚠️ Đang mở bằng file:// nên ES Modules sẽ không chạy. Hãy chạy <code>npm start</code> rồi mở <code>/eval.html</code>.</div>';
+}
+
+function loadImage(src) {
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => res(img);
+    img.onerror = () => res(null);
+    img.src = src;
+  });
+}
+
+function drawToCanvas(img) {
+  const W = 224, H = 224;
+  const scale = Math.min(W / img.naturalWidth, H / img.naturalHeight);
+  const w = img.naturalWidth * scale, h = img.naturalHeight * scale;
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, W, H);
+  ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+}
+
+const argmax = arr => arr.indexOf(Math.max(...arr));
+
+// --- Chạy phân loại một lần cho mọi mẫu, lưu kết quả từng nhánh ---
+const rows = [];
+let missingImages = 0;
+for (const s of DEFAULT_SAMPLES) {
+  const truth = SUBJECTS.indexOf(s.subject);
+  const row = { id: s.id, truth, text: s.text, imageFile: s.image_file, tRes: null, iRes: null };
+
+  if (s.text && s.text.trim().length >= 3) {
+    try { row.tRes = analyzeText(s.text); } catch (e) { row.tRes = null; }
+  }
+  if (s.image_file) {
+    const path = s.image_file.startsWith('data:') ? s.image_file : `assets/demo/image/${s.image_file}`;
+    const img = await loadImage(path);
+    if (img) { drawToCanvas(img); row.iRes = analyzeImage(canvas); }
+    else missingImages++;
+  }
+  rows.push(row);
+}
+
+// --- Dự đoán theo từng chế độ ---
+function predict(row, mode) {
+  if (mode === 'text') {
+    if (!row.tRes) return null;                       // mẫu không có văn bản -> bỏ qua
+    return row.tRes.tokensUsed.length === 0 ? UNKNOWN : argmax(row.tRes.probs);
+  }
+  if (mode === 'image') {
+    if (!row.imageFile) return null;                  // mẫu không có ảnh -> bỏ qua
+    return row.iRes ? argmax(row.iRes.probs) : UNKNOWN;
+  }
+  // fusion: dùng mọi modality có sẵn (MEMD fallback khi thiếu)
+  if (!row.tRes && !row.iRes) return UNKNOWN;
+  const t = row.tRes && row.tRes.tokensUsed.length === 0 && row.iRes ? null : row.tRes;
+  return argmax(fuse(t, row.iRes).probs);
+}
+
+let currentMode = 'text';
+let lastMatrix = null;
+
+function render(mode) {
+  currentMode = mode;
+  const n = SUBJECTS.length;
+  const M = Array.from({ length: n }, () => new Array(n + 1).fill(0));
+  const errors = [];
+  let total = 0, correct = 0;
+
+  for (const r of rows) {
+    const p = predict(r, mode);
+    if (p === null) continue;
+    M[r.truth][p]++;
+    total++;
+    if (p === r.truth) correct++;
+    else errors.push({ r, p });
+  }
+  lastMatrix = M;
+
+  // Tổng quan
+  const prec = [], rec = [], f1 = [];
+  for (let i = 0; i < n; i++) {
+    const tp = M[i][i];
+    const rowSum = M[i].reduce((a, b) => a + b, 0);
+    let colSum = 0; for (let k = 0; k < n; k++) colSum += M[k][i];
+    const P = colSum ? tp / colSum : 0, R = rowSum ? tp / rowSum : 0;
+    prec.push(P); rec.push(R); f1.push(P + R ? 2 * P * R / (P + R) : 0);
+  }
+  const used = M.map(r => r.reduce((a, b) => a + b, 0)).filter(x => x > 0).length;
+  const macroF1 = f1.reduce((a, b) => a + b, 0) / Math.max(used, 1);
+  const unknown = M.reduce((a, r) => a + r[n], 0);
+
+  document.getElementById('status').textContent =
+    `Đã chạy ${rows.length} mẫu • ${total} mẫu thuộc chế độ này` +
+    (missingImages ? ` • ⚠️ ${missingImages} ảnh không nạp được (sai đường dẫn assets/demo/image/?)` : '');
+  document.getElementById('summary').innerHTML = `
+    <div class="stat"><b>${total ? (100 * correct / total).toFixed(1) : 0}%</b>Accuracy (${correct}/${total})</div>
+    <div class="stat"><b>${(100 * macroF1).toFixed(1)}%</b>Macro-F1</div>
+    <div class="stat"><b>${unknown}</b>Không dự đoán được (?)</div>`;
+
+  // Ma trận
+  const maxCell = Math.max(1, ...M.flat());
+  let html = '<tr><th>Thực tế ↓ / Dự đoán →</th>' + SHORT.map(s => `<th>${s}</th>`).join('') + '<th>?</th><th>Tổng</th></tr>';
+  for (let i = 0; i < n; i++) {
+    const sum = M[i].reduce((a, b) => a + b, 0);
+    html += `<tr><th class="row">${SUBJECTS[i]}</th>`;
+    for (let j = 0; j <= n; j++) {
+      const v = M[i][j];
+      const a = v / maxCell;
+      const color = j === i ? `rgba(34,197,94,${0.15 + 0.6 * a})` : (v ? `rgba(239,68,68,${0.15 + 0.6 * a})` : 'transparent');
+      html += `<td class="${j === i ? 'diag' : ''} ${v ? '' : 'zero'}" style="background:${color}">${v}</td>`;
+    }
+    html += `<td><b>${sum}</b></td></tr>`;
+  }
+  document.getElementById('matrix').innerHTML = html;
+
+  // Precision / Recall / F1
+  let mh = '<tr><th>Môn</th><th>Precision</th><th>Recall</th><th>F1</th></tr>';
+  for (let i = 0; i < n; i++) {
+    mh += `<tr><th class="row">${SUBJECTS[i]}</th><td>${(100 * prec[i]).toFixed(1)}%</td><td>${(100 * rec[i]).toFixed(1)}%</td><td>${(100 * f1[i]).toFixed(1)}%</td></tr>`;
+  }
+  document.getElementById('metrics').innerHTML = mh;
+
+  // Danh sách sai
+  document.getElementById('errors').innerHTML = errors.length
+    ? errors.map(({ r, p }) => {
+        const label = p === UNKNOWN ? '?' : SUBJECTS[p];
+        const desc = r.text ? r.text.slice(0, 70) : r.imageFile;
+        return `<div><b>${r.id}</b>: ${SUBJECTS[r.truth]} → <b>${label}</b> <span class="muted">(${desc})</span></div>`;
+      }).join('')
+    : '<div>🎉 Không có mẫu sai.</div>';
+
+  document.querySelectorAll('button[data-mode]').forEach(b =>
+    b.classList.toggle('active', b.dataset.mode === mode));
+}
+
+document.querySelectorAll('button[data-mode]').forEach(b =>
+  b.addEventListener('click', () => render(b.dataset.mode)));
+
+document.getElementById('btn-csv').addEventListener('click', () => {
+  const head = ['Thực tế \\ Dự đoán', ...SUBJECTS, '?'].join(',');
+  const lines = lastMatrix.map((r, i) => [SUBJECTS[i], ...r].join(','));
+  const blob = new Blob(['﻿' + [head, ...lines].join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `confusion_matrix_${currentMode}.csv`;
+  a.click();
+});
+
+render('text');
+</script>
+</body>
+</html>
